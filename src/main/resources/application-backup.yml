@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://vocab:<PASSWORD>@vocab.xmeaz3x.mongodb.net/vocab_dev?retryWrites=true&w=majority

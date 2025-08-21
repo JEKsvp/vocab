@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "id": "5d764a34-04c7-4878-a676-8574f9a336a6",
+      "title": "fast",
+      "transcription": null,
+      "part": "adjective",
+      "status": "LEARNED",
+      "definitions": [
+        {
+          "definition": "(especially of something hot or warm) to produce a steady light that is not very bright",
+          "examples": [
+            "The embers still glowed in the hearth.",
+            "The lighted candles glowed in the darkness.",
+            "The strap has a fluorescent coating that glows in the dark.",
+            "A cigarette end glowed red in the darkness."
+          ]
+        }
+      ],
+      "createDate": "27-09-2022 22:30:40",
+      "lastUpdateDate": "27-09-2022 22:30:40",
+      "language": "ENGLISH"
+    },
+    {
+      "id": "5d764a34-04c7-4878-a676-8574f9a336a5",
+      "title": "stop",
+      "transcription": null,
+      "part": "verb",
+      "status": "LEARNED",
+      "definitions": [
+        {
+          "definition": "(especially of something hot or warm) to produce a steady light that is not very bright",
+          "examples": [
+            "The embers still glowed in the hearth.",
+            "The lighted candles glowed in the darkness.",
+            "The strap has a fluorescent coating that glows in the dark.",
+            "A cigarette end glowed red in the darkness."
+          ]
+        }
+      ],
+      "createDate": "26-09-2022 22:30:40",
+      "lastUpdateDate": "26-09-2022 22:30:40",
+      "language": "ENGLISH"
+    }
+  ],
+  "paging": {
+    "size": 20,
+    "totalElements": 2,
+    "totalPages": 1,
+    "number": 0
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "messages": [
+    "Validation error. Field: username; message: length must be between 6 and 32.",
+    "Validation error. Field: password; message: length must be between 6 and 32."
+  ]
+}

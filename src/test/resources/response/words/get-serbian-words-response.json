@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "5d764a34-04c7-4878-a676-8574f9a336a8",
+      "title": "dobro",
+      "transcription": "dobro",
+      "part": "adverb",
+      "status": "TO_LEARN",
+      "language": "SERBIAN",
+      "createDate": "29-09-2022 22:30:40",
+      "lastUpdateDate": "29-09-2022 22:30:40",
+      "definitions": [
+        {
+          "definition": "test",
+          "examples": [
+            "test"
+          ]
+        }
+      ]
+    }
+  ],
+  "paging": {
+    "size": 20,
+    "totalElements": 1,
+    "totalPages": 1,
+    "number": 0
+  }
+}

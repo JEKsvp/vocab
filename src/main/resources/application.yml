@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT}
+  servlet:
+    session:
+      timeout: 30d
+
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+  signing-key: ${OUAUTH_SIGNING_KEY}
+  encoding-strength: ${OAUTH_ENCODING_STRENGTH}
+  security-realm: ${OAUTH_SECURITY_REALM}
+  jwt:
+    client-id: ${OAUTH_CLIENT_ID}
+    client-secret: ${OAUTH_SECRET}
+    scope-read: read
+    scope-write: write
+    resource-ids: ${OAUTH_RESOURCE_IDS}
+    access_token_validity_in_seconds: ${OATUH_ACCESS_TOKEN_TIMEOUT}
+    refresh_token_validity_in_seconds: ${OAUTH_REFRESH_TOKEN_TIMEOUT}
+
+spring:
+  data:
+    mongodb:
+      uri: ${DATABASE_URI}
