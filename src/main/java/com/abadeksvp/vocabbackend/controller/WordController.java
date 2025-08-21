@@ -11,7 +11,7 @@ import com.abadeksvp.vocabbackend.service.WordService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/words")
@@ -23,17 +23,17 @@ public class WordController {
         this.wordService = wordService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PageableDto<WordResponse> getWordsToLearn(@Valid WordsFilter filter) {
         return wordService.getWords(filter);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public WordResponse createWord(@RequestBody @Valid CreateWordRequest request) {
         return wordService.createWord(request);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public WordResponse updateWord(@RequestBody @Valid UpdateWordRequest request) {
         return wordService.updateWord(request);
     }
@@ -48,7 +48,7 @@ public class WordController {
         return wordService.getWordById(wordId);
     }
 
-    @PatchMapping(value = "/status", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PatchMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
     public WordResponse changeStatus(@RequestBody @Valid ChangeWordStatusRequest request) {
         return wordService.changeWordStatus(request);
     }

@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static com.abadeksvp.vocabbackend.integration.helpers.DefaultClient.CLIENT_ID;
 import static com.abadeksvp.vocabbackend.integration.helpers.DefaultClient.SECRET;
@@ -66,7 +66,7 @@ public class TestUserManager {
                         .with(httpBasic(CLIENT_ID, SECRET))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         String resultString = result.andReturn().getResponse().getContentAsString();
 

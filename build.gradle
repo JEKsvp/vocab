@@ -1,12 +1,19 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.4'
-    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'java'
 }
 
 group = 'com.abadeksvp'
 version = '1.0.0'
-sourceCompatibility = '17'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
 configurations {
     compileOnly {
@@ -19,7 +26,8 @@ repositories {
 }
 
 ext {
-    set('testcontainersVersion', "1.17.3")
+    set('testcontainersVersion', "1.20.1")
+    set('querydslVersion', "5.1.0")
 }
 
 dependencies {
@@ -28,31 +36,29 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.security:spring-security-jwt:1.1.1.RELEASE'
-    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
-    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
-    implementation 'org.javassist:javassist:3.25.0-GA'
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation 'org.mongodb:mongodb-driver-core:4.6.1'
 
-    implementation "com.querydsl:querydsl-mongodb"
-    annotationProcessor("com.querydsl:querydsl-apt::general")
+    // Querydsl (Jakarta)
+    implementation "com.querydsl:querydsl-core:${querydslVersion}"
+    implementation ("com.querydsl:querydsl-mongodb:${querydslVersion}") {
+        exclude group: 'org.mongodb', module: 'mongo-java-driver'
+    }
+    annotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:general"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation "com.querydsl:querydsl-mongodb"
-    testAnnotationProcessor("com.querydsl:querydsl-apt::general")
+    testImplementation ("com.querydsl:querydsl-mongodb:${querydslVersion}") {
+        exclude group: 'org.mongodb', module: 'mongo-java-driver'
+    }
+    testAnnotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:general"
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.11'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.2'
+    testImplementation 'commons-io:commons-io:2.15.1'
 }
 
 dependencyManagement {
