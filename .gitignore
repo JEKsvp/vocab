@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+/env/mongodbdata
 
 ### STS ###
 .apt_generated
@@ -37,7 +38,8 @@ out/
 .vscode/
 
 ### Node.js ###
-/node_modules
+*/node_modules/
+*/dist/
 /.pnp
 .pnp.js
 

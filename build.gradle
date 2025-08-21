@@ -67,6 +67,37 @@ dependencyManagement {
     }
 }
 
+// --- Client build integration ---
+// Detect Windows to use npm.cmd
+def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+def npmCommand = isWindows ? 'npm.cmd' : 'npm'
+
+// Install client dependencies (use install for Windows stability due to file locks)
+tasks.register('npmInstall', Exec) {
+    workingDir file('client')
+    commandLine npmCommand, 'install', '--no-audit', '--no-fund'
+}
+
+// Build the React client (outputs to client/dist by project convention)
+tasks.register('npmBuild', Exec) {
+    dependsOn 'npmInstall'
+    workingDir file('client')
+    // Ensure BUILD_PATH is set in a cross-platform manner so CRA outputs to client/dist
+    environment 'BUILD_PATH', './dist'
+    commandLine npmCommand, 'run', 'build'
+}
+
+// Include built client in Spring Boot resources via processResources to avoid implicit outputs
+// Make processResources depend on npmBuild and copy client/dist into static/
+tasks.named('processResources') {
+    dependsOn 'npmBuild'
+    from('client/dist') {
+        into 'static'
+    }
+}
+
+// No need to wire bootJar/bootRun explicitly; they depend on processResources transitively
+
 tasks.named('test') {
     useJUnitPlatform()
 }
