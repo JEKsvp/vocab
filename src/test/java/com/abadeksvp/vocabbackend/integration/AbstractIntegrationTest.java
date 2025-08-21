@@ -1,6 +1,7 @@
 package com.abadeksvp.vocabbackend.integration;
 
 import com.abadeksvp.vocabbackend.integration.configuration.IntegrationTestsConfiguration;
+import com.abadeksvp.vocabbackend.integration.helpers.FileReader;
 import com.abadeksvp.vocabbackend.integration.helpers.TestUserManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
@@ -29,6 +30,8 @@ public abstract class AbstractIntegrationTest {
     static void checkDockerAvailability() {
         Assumptions.assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available for Testcontainers");
     }
+
+    protected FileReader fileReader = new FileReader();
 
     private static final MongoDBContainer MONGO_DB_CONTAINER = new MongoDBContainer("mongo:7.0.12");
 

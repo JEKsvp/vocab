@@ -1,24 +1,20 @@
 package com.abadeksvp.vocabbackend.integration.helpers;
 
+import com.abadeksvp.vocabbackend.model.api.LoginRequest;
 import com.abadeksvp.vocabbackend.model.api.SignUpRequest;
 import com.abadeksvp.vocabbackend.model.api.UserResponse;
 import com.abadeksvp.vocabbackend.service.UserService;
 import lombok.SneakyThrows;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import jakarta.validation.Valid;
 
-import static com.abadeksvp.vocabbackend.integration.helpers.DefaultClient.CLIENT_ID;
-import static com.abadeksvp.vocabbackend.integration.helpers.DefaultClient.SECRET;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserManager {
@@ -54,31 +50,25 @@ public class TestUserManager {
     }
 
     @SneakyThrows
-    public String obtainAccessToken(String login, String password) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "password");
-        params.add("username", login);
-        params.add("password", password);
-
-        ResultActions result
-                = this.mockMvc.perform(post("/oauth/token")
-                        .params(params)
-                        .with(httpBasic(CLIENT_ID, SECRET))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        String resultString = result.andReturn().getResponse().getContentAsString();
-
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        return jsonParser.parseMap(resultString).get("access_token").toString();
-    }
-
-    @SneakyThrows
     public HttpHeaders obtainAuthHeader(String login, String password) {
+        LoginRequest loginRequest = new LoginRequest(login, password);
+        String body = TestObjectMapper.getInstance().writeValueAsString(loginRequest);
+        MvcResult result = this.mockMvc.perform(post("/v1/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String setCookie = result.getResponse().getHeader(HttpHeaders.SET_COOKIE);
+        String cookieValue = null;
+        if (setCookie != null) {
+            int idx = setCookie.indexOf(';');
+            cookieValue = idx > 0 ? setCookie.substring(0, idx) : setCookie;
+        }
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        String token = obtainAccessToken(login, password);
-        map.add("Authorization", "Bearer " + token);
+        if (cookieValue != null) {
+            map.add(HttpHeaders.COOKIE, cookieValue);
+        }
         return new HttpHeaders(map);
     }
 

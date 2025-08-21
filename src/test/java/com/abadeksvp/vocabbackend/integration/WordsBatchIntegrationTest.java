@@ -7,20 +7,23 @@ import com.abadeksvp.vocabbackend.model.WordStatus;
 import com.abadeksvp.vocabbackend.model.api.word.response.WordResponse;
 import com.abadeksvp.vocabbackend.model.db.Language;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.abadeksvp.vocabbackend.integration.helpers.TestUserManager.DEFAULT_TEST_USERNAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(username = DEFAULT_TEST_USERNAME)
 public class WordsBatchIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -32,32 +35,28 @@ public class WordsBatchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void createWordsBatchTest() throws Exception {
-        HttpHeaders authHeader = testUserManager.signUpUserAndAuthHeader();
+        testUserManager.signUpDefaultTestUser();
         for (int i = 0; i < 30; i++) {
             uuidGenerator.setUuid(UUID.randomUUID());
-            testWordManager.createWord(authHeader, "/request/words/create-word-glow-request.json");
+            testWordManager.createWord("/request/words/create-word-glow-request.json");
             uuidGenerator.setUuid(UUID.randomUUID());
-            testWordManager.createWord(authHeader, "/request/words/create-word-stop-request.json");
+            testWordManager.createWord("/request/words/create-word-stop-request.json");
         }
         mockMvc.perform(post("/v1/words-batch/generate")
-                        .param("size", "10")
-                        .headers(authHeader))
+                        .param("size", "10"))
                 .andExpect(status().isOk());
 
-        String firstResponse = mockMvc.perform(get("/v1/words-batch")
-                        .headers(authHeader))
+        String firstResponse = mockMvc.perform(get("/v1/words-batch"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         mockMvc.perform(post("/v1/words-batch/generate")
-                        .param("size", "10")
-                        .headers(authHeader))
+                        .param("size", "10"))
                 .andExpect(status().isOk());
 
-        String secondResponse = mockMvc.perform(get("/v1/words-batch")
-                        .headers(authHeader))
+        String secondResponse = mockMvc.perform(get("/v1/words-batch"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         List<WordResponse> firstBatch = TestObjectMapper.getInstance().readValue(firstResponse, new TypeReference<>() {
         });
@@ -90,46 +89,40 @@ public class WordsBatchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void differentLanguagesDifferentBatchesTest() throws Exception {
-        HttpHeaders authHeader = testUserManager.signUpUserAndAuthHeader();
+        testUserManager.signUpDefaultTestUser();
         for (int i = 0; i < 11; i++) {
             uuidGenerator.setUuid(UUID.randomUUID());
-            testWordManager.createWord(authHeader, "/request/words/create-word-glow-request.json");
+            testWordManager.createWord("/request/words/create-word-glow-request.json");
             uuidGenerator.setUuid(UUID.randomUUID());
-            testWordManager.createWord(authHeader, "/request/words/create-serbian-word-request.json");
+            testWordManager.createWord("/request/words/create-serbian-word-request.json");
         }
         mockMvc.perform(post("/v1/words-batch/generate")
-                        .param("size", "10")
-                        .headers(authHeader))
+                        .param("size", "10"))
                 .andExpect(status().isOk());
 
-        String defaultEnglishBatch = mockMvc.perform(get("/v1/words-batch")
-                        .headers(authHeader))
+        String defaultEnglishBatch = mockMvc.perform(get("/v1/words-batch"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         mockMvc.perform(post("/v1/words-batch/generate")
                         .param("size", "10")
-                        .param("language", "ENGLISH")
-                        .headers(authHeader))
+                        .param("language", "ENGLISH"))
                 .andExpect(status().isOk());
 
         String explicitEnglishBatchResponse = mockMvc.perform(get("/v1/words-batch")
-                        .param("language", "ENGLISH")
-                        .headers(authHeader))
+                        .param("language", "ENGLISH"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         mockMvc.perform(post("/v1/words-batch/generate")
                         .param("size", "10")
-                        .param("language", "SERBIAN")
-                        .headers(authHeader))
+                        .param("language", "SERBIAN"))
                 .andExpect(status().isOk());
 
         String serbianBatchResponse = mockMvc.perform(get("/v1/words-batch")
-                        .param("language", "SERBIAN")
-                        .headers(authHeader))
+                        .param("language", "SERBIAN"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         List<WordResponse> englishBatch = TestObjectMapper.getInstance().readValue(defaultEnglishBatch, new TypeReference<>() {
         });

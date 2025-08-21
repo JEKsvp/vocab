@@ -5,23 +5,28 @@ import com.abadeksvp.vocabbackend.integration.helpers.TestUuidGenerator;
 import com.abadeksvp.vocabbackend.integration.helpers.TestWordManager;
 import com.abadeksvp.vocabbackend.model.api.SignUpRequest;
 import com.abadeksvp.vocabbackend.model.api.UserResponse;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.testcontainers.shaded.com.google.common.base.Charsets;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.abadeksvp.vocabbackend.integration.helpers.TestDateTimeGenerator.FORMATTER;
+import static com.abadeksvp.vocabbackend.integration.helpers.TestUserManager.DEFAULT_TEST_USERNAME;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(username = DEFAULT_TEST_USERNAME)
 public class WordsIntegrationTest extends AbstractIntegrationTest {
 
     public static final UUID GLOW_WORD_ID = UUID.fromString("5d764a34-04c7-4878-a676-8574f9a336a4");
@@ -47,55 +52,50 @@ public class WordsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void createAndChangeWordTest() throws Exception {
-        HttpHeaders authHeader = testUserManager.signUpUserAndAuthHeader();
-        createWordGlow(authHeader);
+        testUserManager.signUpDefaultTestUser();
+        createWordGlow();
 
-
-        String updateWordRequest = IOUtils.toString(getClass().getResource("/request/words/update-word-request.json"), Charsets.UTF_8);
+        String updateWordRequest = fileReader.read("/request/words/update-word-request.json");
         String actualUpdateWordResponse = mockMvc.perform(put("/v1/words")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .headers(authHeader)
                         .content(updateWordRequest))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        String expectedUpdateWordResponse = IOUtils.toString(getClass().getResource("/response/words/update-word-response.json"), Charsets.UTF_8);
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedUpdateWordResponse = fileReader.read("/response/words/update-word-response.json");
         JSONAssert.assertEquals(expectedUpdateWordResponse, actualUpdateWordResponse, JSONCompareMode.STRICT);
 
-        String changeStatusRequest = IOUtils.toString(getClass().getResource("/request/words/change-status-request.json"), Charsets.UTF_8);
+        String changeStatusRequest = fileReader.read("/request/words/change-status-request.json");
         String actualChangeStatusWordResponse = mockMvc.perform(patch("/v1/words/status")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .headers(authHeader)
                         .content(changeStatusRequest))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        String expectedChangeStatusRequest = IOUtils.toString(getClass().getResource("/response/words/change-status-response.json"), Charsets.UTF_8);
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String expectedChangeStatusRequest = fileReader.read("/response/words/change-status-response.json");
         JSONAssert.assertEquals(expectedChangeStatusRequest, actualChangeStatusWordResponse, JSONCompareMode.STRICT);
     }
 
     @Test
     public void getWordsTest() throws Exception {
-        HttpHeaders authHeader = testUserManager.signUpUserAndAuthHeader();
-        createWordGlow(authHeader);
-        createWordStop(authHeader);
-        createWordFast(authHeader);
-        createWordFinish(authHeader);
+        testUserManager.signUpDefaultTestUser();
+        createWordGlow();
+        createWordStop();
+        createWordFast();
+        createWordFinish();
 
         String actualAllToLearnWordsResponse = mockMvc.perform(get("/v1/words")
-                        .param("status", "TO_LEARN")
-                        .headers(authHeader))
+                        .param("status", "TO_LEARN"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        String expectedAllToLearnWordsResponse = IOUtils.toString(getClass().getResource("/response/words/get-to-learn-words-response.json"), Charsets.UTF_8);
+        String expectedAllToLearnWordsResponse = fileReader.read("/response/words/get-to-learn-words-response.json");
         JSONAssert.assertEquals(expectedAllToLearnWordsResponse, actualAllToLearnWordsResponse, JSONCompareMode.STRICT);
 
         String actualAllLearnedWordsResponse = mockMvc.perform(get("/v1/words")
-                        .param("status", "LEARNED")
-                        .headers(authHeader))
+                        .param("status", "LEARNED"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        String expectedAllLearnedWordsResponse = IOUtils.toString(getClass().getResource("/response/words/get-learned-words-response.json"), Charsets.UTF_8);
+        String expectedAllLearnedWordsResponse = fileReader.read("/response/words/get-learned-words-response.json");
         JSONAssert.assertEquals(expectedAllLearnedWordsResponse, actualAllLearnedWordsResponse, JSONCompareMode.STRICT);
     }
 
@@ -105,25 +105,21 @@ public class WordsIntegrationTest extends AbstractIntegrationTest {
                 .username("aaaaaa")
                 .password("aaaaaa")
                 .build());
-        HttpHeaders authHeader1 = testUserManager.obtainAuthHeader("aaaaaa", "aaaaaa");
 
         UserResponse user2 = testUserManager.signUp(SignUpRequest.builder()
                 .username("aaaaab")
                 .password("aaaaab")
                 .build());
-        HttpHeaders authHeader2 = testUserManager.obtainAuthHeader("aaaaab", "aaaaab");
 
-        createWordGlow(authHeader1);
-        createWordFinish(authHeader2);
+        createWordGlow(user("aaaaaa"));
+        createWordFinish(user("aaaaab"));
 
-        mockMvc.perform(get("/v1/words")
-                        .headers(authHeader1))
+        mockMvc.perform(get("/v1/words").with(user("aaaaaa")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[*].id").value(GLOW_WORD_ID.toString()));
 
-        mockMvc.perform(get("/v1/words")
-                        .headers(authHeader2))
+        mockMvc.perform(get("/v1/words").with(user("aaaaab")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[*].id").value(FINISH_WORD_ID.toString()));
@@ -132,55 +128,68 @@ public class WordsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void createSerbianWord() throws Exception {
-        HttpHeaders authHeader = testUserManager.signUpUserAndAuthHeader();
-        createWord(authHeader,
-                SERBIAN_WORD_ID,
+        testUserManager.signUpDefaultTestUser();
+        createWord(SERBIAN_WORD_ID,
                 "/request/words/create-serbian-word-request.json",
                 SERBIAN_WORD_DATE_TIME);
 
         String actualAllToLearnWordsResponse = mockMvc.perform(get("/v1/words")
                         .param("status", "TO_LEARN")
-                        .param("language", "SERBIAN")
-                        .headers(authHeader))
+                        .param("language", "SERBIAN"))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        String expectedAllToLearnWordsResponse = IOUtils.toString(getClass().getResource("/response/words/get-serbian-words-response.json"), Charsets.UTF_8);
+        String expectedAllToLearnWordsResponse = fileReader.read("/response/words/get-serbian-words-response.json");
         JSONAssert.assertEquals(expectedAllToLearnWordsResponse, actualAllToLearnWordsResponse, JSONCompareMode.STRICT);
     }
 
-
-    private void createWordGlow(HttpHeaders authHeader) throws Exception {
-        createWord(authHeader,
-                GLOW_WORD_ID,
+    private void createWordGlow() throws Exception {
+        createWord(GLOW_WORD_ID,
                 "/request/words/create-word-glow-request.json",
                 GLOW_WORD_DATE_TIME);
     }
 
-    private void createWordStop(HttpHeaders authHeader) throws Exception {
-        createWord(authHeader,
-                STOP_WORD_ID,
+    private void createWordGlow(RequestPostProcessor postProcessor) throws Exception {
+        createWord(GLOW_WORD_ID,
+                "/request/words/create-word-glow-request.json",
+                GLOW_WORD_DATE_TIME,
+                postProcessor);
+    }
+
+    private void createWordStop() throws Exception {
+        createWord(STOP_WORD_ID,
                 "/request/words/create-word-stop-request.json",
                 STOP_WORD_DATE_TIME);
     }
 
-    private void createWordFast(HttpHeaders authHeader) throws Exception {
-        createWord(authHeader,
-                FAST_WORD_ID,
+    private void createWordFast() throws Exception {
+        createWord(FAST_WORD_ID,
                 "/request/words/create-word-fast-request.json",
                 FAST_WORD_DATE_TIME);
     }
 
-    private void createWordFinish(HttpHeaders authHeader) throws Exception {
-        createWord(authHeader,
-                FINISH_WORD_ID,
+    private void createWordFinish() throws Exception {
+        createWord(FINISH_WORD_ID,
                 "/request/words/create-word-finish-request.json",
                 FINISH_WORD_DATE_TIME);
     }
 
-    private void createWord(HttpHeaders authHeader, UUID wordId, String requestPath, LocalDateTime datetime) throws Exception {
+    private void createWordFinish(RequestPostProcessor postProcessor) throws Exception {
+        createWord(FINISH_WORD_ID,
+                "/request/words/create-word-finish-request.json",
+                FINISH_WORD_DATE_TIME,
+                postProcessor);
+    }
+
+    private void createWord(UUID wordId, String requestPath, LocalDateTime datetime) throws Exception {
         uuidGenerator.setUuid(wordId);
         dateTimeGenerator.setDateTime(datetime);
-        testWordManager.createWord(authHeader, requestPath);
+        testWordManager.createWord(requestPath);
+    }
+
+    private void createWord(UUID wordId, String requestPath, LocalDateTime datetime, RequestPostProcessor postProcessor) throws Exception {
+        uuidGenerator.setUuid(wordId);
+        dateTimeGenerator.setDateTime(datetime);
+        testWordManager.createWord(requestPath, postProcessor);
     }
 }

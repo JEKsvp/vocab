@@ -2,9 +2,9 @@ package com.abadeksvp.vocabbackend.integration;
 
 import com.abadeksvp.vocabbackend.integration.helpers.TestObjectMapper;
 import com.abadeksvp.vocabbackend.model.api.UserResponse;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
@@ -15,16 +15,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @WithMockUser(username = DEFAULT_TEST_USERNAME)
     public void getCurrentUserTest() throws Exception {
         UserResponse userResponse = testUserManager.signUpDefaultTestUser();
-        HttpHeaders authHeader = testUserManager.obtainDefaultUserHeader();
         String response = mockMvc.perform(
                         get("/v1/current-user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .headers(authHeader)
                 )
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         JSONAssert.assertEquals(TestObjectMapper.getInstance().writeValueAsString(userResponse), response, false);
     }
 }

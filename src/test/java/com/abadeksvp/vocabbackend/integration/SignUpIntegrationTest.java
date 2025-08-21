@@ -1,5 +1,6 @@
 package com.abadeksvp.vocabbackend.integration;
 
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -18,25 +19,25 @@ public class SignUpIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     public void validSignUpTest() throws Exception {
-        String requestBody = IOUtils.toString(getClass().getResource("/request/sign-up-request.json"), Charsets.UTF_8);
-        String expectedResponse = IOUtils.toString(getClass().getResource("/response/sign-up-response.json"), Charsets.UTF_8);
+        String requestBody = fileReader.read("/request/sign-up-request.json");
+        String expectedResponse = fileReader.read("/response/sign-up-response.json");
         String actualResponse = mockMvc.perform(post("/v1/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test
     public void invalidSignUpTest() throws Exception {
-        String requestBody = IOUtils.toString(getClass().getResource("/request/invalid-sign-up-request.json"), Charset.defaultCharset());
-        String expectedResponse = IOUtils.toString(getClass().getResource("/response/invalid-sign-up-response.json"), Charset.defaultCharset());
+        String requestBody = fileReader.read("/request/invalid-sign-up-request.json");
+        String expectedResponse = fileReader.read("/response/invalid-sign-up-response.json");
         String actualResponse = mockMvc.perform(post("/v1/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().is4xxClientError())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, actualResponse, excludeFields("id"));
     }
 }
