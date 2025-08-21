@@ -57,7 +57,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.2'
+    testImplementation 'org.testcontainers:mongodb'
     testImplementation 'commons-io:commons-io:2.15.1'
 }
 
