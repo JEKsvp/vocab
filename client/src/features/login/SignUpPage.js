@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {
-  Box, 
+  Box,
   Button, 
   TextField, 
   Alert, 
@@ -10,33 +10,55 @@ import {
   Stack,
   Divider
 } from "@mui/material";
-import {Login as LoginIcon, PersonAdd as PersonAddIcon} from "@mui/icons-material";
-import {login} from '../../api/loginAPI'
-import {useNavigate, useLocation} from "react-router-dom";
+import {PersonAdd as PersonAddIcon, Login as LoginIcon} from "@mui/icons-material";
+import {signup} from '../../api/signupAPI'
+import {useNavigate} from "react-router-dom";
 
-export const LoginPage = () => {
+export const SignUpPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const successMessage = location.state?.message;
 
-  function onClickLogin() {
+  const validateForm = () => {
+    if (username.length < 6 || username.length > 32) {
+      setError('Username must be between 6 and 32 characters');
+      return false;
+    }
+    if (password.length < 6 || password.length > 32) {
+      setError('Password must be between 6 and 32 characters');
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+    return true;
+  };
+
+  function onClickSignUp() {
+    setError('');
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
-    login(username, password)
+    signup(username, password)
       .then(() => {
         setLoading(false);
-        navigate("/");
+        navigate("/login", { state: { message: "Account created successfully! Please log in." } });
       })
       .catch(ex => {
         setLoading(false);
-        console.log(ex);
+        setError(ex.response?.data?.message || 'Sign up failed. Please try again.');
       });
   }
 
-  function onClickGoToSignUp() {
-    navigate("/signup");
+  function onClickGoToLogin() {
+    navigate("/login");
   }
 
   return (
@@ -57,23 +79,23 @@ export const LoginPage = () => {
             flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
-            maxWidth: 400,
+            maxWidth: 450,
             borderRadius: 2,
           }}
         >
-          <LoginIcon sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
+          <PersonAddIcon sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
           
           <Typography component="h1" variant="h4" gutterBottom>
-            Welcome Back
+            Create Account
           </Typography>
           
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3, textAlign: 'center' }}>
-            Sign in to your account to continue
+            Join us to start building your vocabulary
           </Typography>
 
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 3, width: '100%' }}>
-              {successMessage}
+          {error && (
+            <Alert severity="error" sx={{ mb: 3, width: '100%' }}>
+              {error}
             </Alert>
           )}
           
@@ -85,6 +107,8 @@ export const LoginPage = () => {
               fullWidth
               variant="outlined"
               disabled={loading}
+              helperText="6-32 characters"
+              error={username.length > 0 && (username.length < 6 || username.length > 32)}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
@@ -100,6 +124,25 @@ export const LoginPage = () => {
               fullWidth
               variant="outlined"
               disabled={loading}
+              helperText="6-32 characters"
+              error={password.length > 0 && (password.length < 6 || password.length > 32)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                }
+              }}
+            />
+            
+            <TextField 
+              label="Confirm Password"
+              type="password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              fullWidth
+              variant="outlined"
+              disabled={loading}
+              error={confirmPassword.length > 0 && password !== confirmPassword}
+              helperText={confirmPassword.length > 0 && password !== confirmPassword ? "Passwords do not match" : "Re-enter your password"}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
@@ -109,9 +152,9 @@ export const LoginPage = () => {
             
             <Button 
               variant="contained"
-              onClick={onClickLogin}
+              onClick={onClickSignUp}
               disabled={loading}
-              startIcon={<LoginIcon />}
+              startIcon={<PersonAddIcon />}
               size="large"
               sx={{
                 mt: 2,
@@ -122,7 +165,7 @@ export const LoginPage = () => {
                 textTransform: 'none',
               }}
             >
-              {loading ? 'Signing In...' : 'Sign In'}
+              {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
             
             <Divider sx={{ my: 2 }}>
@@ -133,9 +176,9 @@ export const LoginPage = () => {
             
             <Button 
               variant="outlined"
-              onClick={onClickGoToSignUp}
+              onClick={onClickGoToLogin}
               disabled={loading}
-              startIcon={<PersonAddIcon />}
+              startIcon={<LoginIcon />}
               size="large"
               sx={{
                 py: 1.5,
@@ -145,7 +188,7 @@ export const LoginPage = () => {
                 textTransform: 'none',
               }}
             >
-              Create New Account
+              Sign In to Existing Account
             </Button>
           </Stack>
         </Paper>

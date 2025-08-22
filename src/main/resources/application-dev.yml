@@ -20,8 +20,10 @@ security:
 spring:
   data:
     mongodb:
-      uri: mongodb://root:testpassword@localhost:27017/vocab_dev?authSource=admin
+      uri: mongodb://root:testpassword@127.0.0.1:27017/vocab?authSource=admin
 
 logging:
   level:
     root: info
+    com.abadeksvp.vocabbackend.service: debug
+    com.abadeksvp.vocabbackend.security: debug

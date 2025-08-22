@@ -13,6 +13,7 @@ import com.abadeksvp.vocabbackend.security.SecurityUtils;
 import com.abadeksvp.vocabbackend.service.DateTimeGenerator;
 import com.abadeksvp.vocabbackend.service.UuidGenerator;
 import com.abadeksvp.vocabbackend.service.WordsBatchService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WordsBatchServiceImpl implements WordsBatchService {
 
     private static final double TO_LEARN_PERCENTAGE = 0.71;
@@ -50,22 +52,28 @@ public class WordsBatchServiceImpl implements WordsBatchService {
     @Override
     public void generate(int size, Language language) {
         String username = SecurityUtils.getCurrentUsername();
+        log.debug("Generating words batch for user: {}, language: {}, size: {}", username, language, size);
         List<Word> words = wordRepository.findByUsernameAndLanguage(username, language);
+        log.debug("Found {} total words for user {} and language {}", words.size(), username, language);
 
         double toLearnSize = Math.floor(size * TO_LEARN_PERCENTAGE);
         List<UUID> shuffleToLearnIds = getShuffled(words, WordStatus.TO_LEARN, toLearnSize);
+        log.debug("Selected {} TO_LEARN words for batch", shuffleToLearnIds.size());
 
         double learnedSize = Math.ceil(size * LEARNED_PERCENTAGE);
         List<UUID> shuffleLearnedIds = getShuffled(words, WordStatus.LEARNED, learnedSize);
+        log.debug("Selected {} LEARNED words for batch", shuffleLearnedIds.size());
 
         List<UUID> resultIds = new ArrayList<>(shuffleToLearnIds);
         resultIds.addAll(shuffleLearnedIds);
+        log.debug("Total words in batch: {}", resultIds.size());
 
         WordsBatch batch = batchRepository.findByUsernameAndLanguage(username, language)
                 .orElse(createNewBatch(username, language));
         batch.setWords(resultIds);
         batch.setLastUpdateDate(dateTimeGenerator.now());
         batchRepository.save(batch);
+        log.debug("Words batch generated and saved successfully for user: {}", username);
     }
 
     private WordsBatch createNewBatch(String username, Language language) {
@@ -88,9 +96,17 @@ public class WordsBatchServiceImpl implements WordsBatchService {
     @Override
     public List<WordResponse> getBatch(Language language) {
         String username = SecurityUtils.getCurrentUsername();
+        log.debug("Getting words batch for user: {} and language: {}", username, language);
         WordsBatch batch = batchRepository.findByUsernameAndLanguage(username, language)
-                .orElseThrow(() -> new ApiException("Batch not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("Batch not found for user: {} and language: {}", username, language);
+                    return new ApiException("Batch not found", HttpStatus.NOT_FOUND);
+                });
+        log.debug("Found batch with {} words for user: {}", batch.getWords().size(), username);
         List<Word> words = wordRepository.findAllByIdIn(batch.getWords());
-        return toWordResponseMapper.mapAll(words);
+        log.debug("Retrieved {} words from database for batch", words.size());
+        List<WordResponse> result = toWordResponseMapper.mapAll(words);
+        log.debug("Returning batch with {} word responses to user: {}", result.size(), username);
+        return result;
     }
 }

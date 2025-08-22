@@ -18,6 +18,7 @@ import com.abadeksvp.vocabbackend.security.SecurityUtils;
 import com.abadeksvp.vocabbackend.service.WordService;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class WordServiceImpl implements WordService {
 
     private final WordRepository wordRepository;
@@ -46,23 +48,34 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public PageableDto<WordResponse> getWords(WordsFilter filter) {
+        log.debug("Getting words with filter - page: {}, size: {}, status: {}, language: {}, query: {}", 
+                filter.getPage(), filter.getSize(), filter.getStatus(), filter.getLanguage(), filter.getQ());
         Predicate predicate = buildMongoPredicate(filter);
         PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getSize())
                 .withSort(Sort.Direction.DESC, "lastUpdateDate");
         Page<Word> page = wordRepository.findAll(predicate, pageRequest);
+        log.debug("Found {} words out of {} total for current filter", page.getNumberOfElements(), page.getTotalElements());
         return new PageableDto<>(page, toWordResponseMapper::map);
     }
 
     @Override
     public void deleteWord(String wordId) {
+        log.debug("Deleting word with ID: {}", wordId);
         wordRepository.deleteById(UUID.fromString(wordId));
+        log.debug("Word deleted successfully with ID: {}", wordId);
     }
 
     @Override
     public WordResponse getWordById(String wordId) {
-        return wordRepository.findById(UUID.fromString(wordId))
+        log.debug("Getting word by ID: {}", wordId);
+        WordResponse result = wordRepository.findById(UUID.fromString(wordId))
                 .map(toWordResponseMapper::map)
-                .orElseThrow(() -> new ApiException("Word now found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("Word not found with ID: {}", wordId);
+                    return new ApiException("Word now found", HttpStatus.NOT_FOUND);
+                });
+        log.debug("Found word with ID: {} and title: {}", wordId, result.getTitle());
+        return result;
     }
 
     private Predicate buildMongoPredicate(WordsFilter filter) {
@@ -82,26 +95,40 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordResponse createWord(CreateWordRequest request) {
+        log.debug("Creating new word with title: {} and language: {}", request.getTitle(), request.getLanguage());
         Word word = wordCreator.create(request);
         Word savedWord = wordRepository.save(word);
+        log.debug("Word created successfully with ID: {} and title: {}", savedWord.getId(), savedWord.getTitle());
         return toWordResponseMapper.map(savedWord);
     }
 
     @Override
     public WordResponse updateWord(UpdateWordRequest request) {
+        log.debug("Updating word with ID: {}", request.getId());
         Word existingWord = wordRepository.findById(request.getId())
-                .orElseThrow(() -> new ApiException("Word not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("Word not found for update with ID: {}", request.getId());
+                    return new ApiException("Word not found", HttpStatus.NOT_FOUND);
+                });
+        log.debug("Found existing word: {} for update", existingWord.getTitle());
         Word word = wordUpdater.update(request, existingWord);
         Word savedWord = wordRepository.save(word);
+        log.debug("Word updated successfully with ID: {} and title: {}", savedWord.getId(), savedWord.getTitle());
         return toWordResponseMapper.map(savedWord);
     }
 
     @Override
     public WordResponse changeWordStatus(ChangeWordStatusRequest request) {
+        log.debug("Changing word status to {} for word ID: {}", request.getStatus(), request.getId());
         Word word = wordRepository.findById(request.getId())
-                .orElseThrow(() -> new ApiException("Word not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("Word not found for status change with ID: {}", request.getId());
+                    return new ApiException("Word not found", HttpStatus.NOT_FOUND);
+                });
+        log.debug("Current status of word {}: {}, changing to: {}", word.getTitle(), word.getStatus(), request.getStatus());
         word.setStatus(request.getStatus());
         Word savedWord = wordRepository.save(word);
+        log.debug("Word status changed successfully for ID: {}", savedWord.getId());
         return toWordResponseMapper.map(savedWord);
     }
 }

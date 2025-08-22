@@ -8,6 +8,7 @@ import {HomePage} from "./features/home/HomePage";
 import {ToLearn} from "./features/words/ToLearn";
 import {Learned} from "./features/words/Learned";
 import {LoginPage} from "./features/login/LoginPage";
+import {SignUpPage} from "./features/login/SignUpPage";
 import {UserPage} from "./features/user/UserPage";
 import {EditWordForm} from "./features/words/EditWordForm";
 import {NewWordForm} from "./features/words/NewWordForm";
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage/>
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage/>
   },
   {
     path: "/user",

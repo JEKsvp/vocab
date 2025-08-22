@@ -9,6 +9,7 @@ import {NewWordButton} from "../../utils/components/NewWordButton";
 import {getCurrentUser} from "../../api/userAPI";
 import SearchWord from "../words/SearchWord";
 import {SwitchLanguageButton} from "../../utils/components/SwitchLanguageButton";
+import {LogoutButton} from "../../utils/components/LogoutButton";
 
 
 export const HomePage = () => {
@@ -44,6 +45,7 @@ export const HomePage = () => {
       </Grid>
       <NewWordButton/>
       <SwitchLanguageButton/>
+      <LogoutButton/>
     </Box>
   )
 }
