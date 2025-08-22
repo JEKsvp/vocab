@@ -54,7 +54,7 @@ This is a vocabulary learning application built with Spring Boot 3.3.3 backend a
 #### Frontend Only
 ```bash
 cd client
-npm install
+npm install --no-audit --no-fund
 npm run build
 ```
 
@@ -133,7 +133,7 @@ public abstract class AbstractIntegrationTest {
 cd client
 
 # Interactive mode
-npm test
+npm test -- --watchAll=false
 
 # Single run (CI mode)
 npm test -- --watchAll=false
@@ -148,6 +148,209 @@ npm test -- --coverage --watchAll=false
 Test Suites: 1 passed, 1 total
 Tests:       4 passed, 4 total
 ```
+
+### End-to-End Testing with MCP
+
+#### MCP Setup
+- **MCP (Model Context Protocol)** for cross-browser end-to-end testing via MCP server
+- **Cross-browser support**: Chromium, Firefox, WebKit via MCP browser tools
+- **Test utilities** for authentication flows and API mocking
+- **MCP browser tools** for direct browser interaction and testing
+
+#### MCP Server Browser Tools
+The MCP (Model Context Protocol) server provides browser automation capabilities without requiring local Playwright installation or console commands. Key MCP browser functions include:
+
+- **Browser Management**: `mcp_playwright_browser_navigate`, `mcp_playwright_browser_close`
+- **Element Interaction**: `mcp_playwright_browser_click`, `mcp_playwright_browser_type`, `mcp_playwright_browser_hover`
+- **Form Handling**: `mcp_playwright_browser_select_option`, `mcp_playwright_browser_file_upload`
+- **Page Analysis**: `mcp_playwright_browser_snapshot`, `mcp_playwright_browser_take_screenshot`
+- **Network Monitoring**: `mcp_playwright_browser_network_requests`
+- **Console Access**: `mcp_playwright_browser_console_messages`
+
+#### Test Configuration
+Test files are located in `client/e2e/`:
+- **Test directory**: `client/e2e/`
+- **Test files**: `signup.spec.js`, `login.spec.js`
+- **Utilities**: `test-utils.js` (TestDataGenerator, APIMocker, AuthPageHelpers)
+- **Base URL**: `http://localhost:3000` (React dev server)
+
+#### Running Tests with MCP Server
+Instead of console commands, use MCP server browser tools directly:
+
+```javascript
+// Navigate to application
+await mcp_playwright_browser_navigate({ url: 'http://localhost:3000/signup' });
+
+// Take page snapshot for analysis
+await mcp_playwright_browser_snapshot();
+
+// Interact with form elements
+await mcp_playwright_browser_type({
+  element: 'Username field',
+  ref: 'input[name="username"]',
+  text: 'testuser123'
+});
+
+// Click submit button
+await mcp_playwright_browser_click({
+  element: 'Create Account button',
+  ref: 'button[type="submit"]'
+});
+```
+
+#### Test Structure
+Tests are organized in `client/e2e/`:
+- **signup.spec.js**: Sign up form validation and flow testing
+- **login.spec.js**: Login form validation and authentication testing
+- **test-utils.js**: Shared utilities for data generation and API mocking
+
+#### Example E2E Test
+```javascript
+const { TestDataGenerator, APIMocker, AuthPageHelpers } = require('./test-utils');
+
+async function testSuccessfulSignup() {
+  console.log('[DEBUG_LOG] Testing successful signup flow...');
+  
+  const testUser = TestDataGenerator.getValidTestUser();
+  
+  // Navigate to signup page
+  await mcp_playwright_browser_navigate({ url: 'http://localhost:3000/signup' });
+  
+  // Mock successful API response using browser evaluation
+  const mockFunction = await APIMocker.mockSignupSuccess();
+  await mcp_playwright_browser_evaluate({ function: mockFunction });
+  
+  // Fill form using MCP browser functions
+  await mcp_playwright_browser_type({
+    element: 'Username field',
+    ref: 'input[name="username"]',
+    text: testUser.username
+  });
+  
+  await mcp_playwright_browser_type({
+    element: 'Password field',
+    ref: 'input[name="password"]',
+    text: testUser.password
+  });
+  
+  await mcp_playwright_browser_type({
+    element: 'Confirm Password field',
+    ref: 'input[name="confirmPassword"]',
+    text: testUser.password
+  });
+  
+  // Submit form
+  const submitButton = AuthPageHelpers.getSignupSubmitButton();
+  await mcp_playwright_browser_click({
+    element: submitButton.element,
+    ref: submitButton.ref
+  });
+  
+  // Wait for navigation to login page
+  await mcp_playwright_browser_wait_for({
+    text: 'Sign In'
+  });
+  
+  // Verify URL change
+  const currentUrl = await mcp_playwright_browser_evaluate({
+    function: '() => window.location.pathname'
+  });
+  
+  if (currentUrl !== '/login') {
+    throw new Error(`Expected to be on /login, but was on ${currentUrl}`);
+  }
+  
+  console.log('[DEBUG_LOG] Successful signup flow verified');
+}
+```
+
+#### Test Utilities
+The `test-utils.js` file provides:
+
+**TestDataGenerator**:
+- `generateUniqueUsername()`: Creates unique test usernames
+- `generateValidPassword()`: Creates valid passwords
+- `getValidTestUser()`: Returns complete test user data
+- `getInvalidUsernames()`: Test data for validation scenarios
+
+**APIMocker**:
+- `mockSignupSuccess()`: Mock successful signup API calls
+- `mockLoginSuccess()`: Mock successful login API calls
+- `mockSignupFailure()`: Mock API error responses
+- `mockSlowResponse()`: Test loading states with delayed responses
+
+**AuthPageHelpers**:
+- `fillSignupForm()`: Helper to fill signup form fields
+- `fillLoginForm()`: Helper to fill login form fields
+- `submitSignupForm()`: Submit signup form
+- `navigateToLogin()`: Navigate between auth pages
+
+#### Test Coverage
+Current MCP tests cover:
+
+**Sign Up Flow**:
+- Form field validation (username/password length, password confirmation)
+- Successful account creation and navigation to login
+- Error handling for existing users or server errors
+- Loading states and form disabling during submission
+- Navigation between signup and login pages
+
+**Login Flow**:
+- Successful authentication and navigation to home page
+- Form submission with various input combinations
+- Loading states during authentication
+- Error handling for invalid credentials or network issues
+- Success message display from signup redirect
+
+#### Debugging MCP Tests
+Instead of console commands, use MCP server browser tools for debugging:
+
+**Page Analysis and Debugging**:
+```javascript
+// Take screenshot for visual debugging
+await mcp_playwright_browser_take_screenshot({
+  filename: 'debug-screenshot.png',
+  fullPage: true
+});
+
+// Capture page snapshot to analyze elements
+await mcp_playwright_browser_snapshot();
+
+// Monitor console messages for errors
+await mcp_playwright_browser_console_messages();
+
+// Track network requests for API debugging
+await mcp_playwright_browser_network_requests();
+```
+
+**Interactive Debugging**:
+```javascript
+// Evaluate JavaScript on page for debugging
+await mcp_playwright_browser_evaluate({
+  function: '() => { console.log("Debug info:", document.title); }'
+});
+
+// Hover over elements to inspect them
+await mcp_playwright_browser_hover({
+  element: 'Form field',
+  ref: 'input[name="username"]'
+});
+```
+
+#### Best Practices
+- **API Mocking**: Always mock API responses to avoid dependencies on backend state
+- **Unique Test Data**: Use `TestDataGenerator` to avoid conflicts between test runs
+- **Page Object Pattern**: Use helper classes for common interactions
+- **Selective Testing**: Focus on critical user journeys rather than exhaustive coverage
+- **Stable Selectors**: Use semantic selectors (labels, roles) over CSS selectors
+- **Wait Strategies**: Use MCP browser wait functions rather than manual timeouts
+
+#### Troubleshooting
+- **Server Not Starting**: Ensure React dev server can start on port 3000
+- **Test Flakiness**: Check for proper API mocking and avoid race conditions
+- **MCP Server Connection**: Ensure MCP server is properly configured and accessible
+- **Port Conflicts**: Make sure port 3000 is available for test server
+- **Element Selection Issues**: Use stable selectors and verify element references with browser snapshot
 
 ### Adding New Tests
 
@@ -193,7 +396,7 @@ test('renders component', () => {
 
 ### File and Directory Management
 - **node_modules/**: Should be ignored in version control and excluded from project searches/indexing
-  - Contains npm dependencies that can be regenerated via `npm install`
+  - Contains npm dependencies that can be regenerated via `npm install --no-audit --no-fund`
   - Located in `client/node_modules/` directory
 - **dist/**: Should be ignored in version control as it contains build artifacts
   - Frontend build output directory (`client/dist/`)
