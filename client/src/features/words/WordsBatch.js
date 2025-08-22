@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {Box, Grid, IconButton, Typography} from "@mui/material";
 import {HomeButton} from "../../utils/components/HomeButton";
 import {NewWordButton} from "../../utils/components/NewWordButton";
@@ -32,7 +32,7 @@ export const WordsBatch = () => {
     (async () => {
       await fetchWords();
     })();
-  }, [])
+  }, [fetchWords])
 
   function handleChangeStatus(word) {
     setIsLoading(true)

@@ -1,9 +1,10 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Slide from '@mui/material/Slide';
-import {Grid, IconButton, InputAdornment, Paper, TextField, Typography} from "@mui/material";
+import {Box, IconButton, InputAdornment, Paper, TextField, Typography} from "@mui/material";
 import {getAllWords} from "../../api/wordsAPI";
 import {WordAccordion} from "../../utils/components/WordAccordion";
 import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from '@mui/icons-material/Search';
 import debounce from "lodash/debounce";
 import {LanguageStore} from "../../app/LanguageStore";
 
@@ -11,6 +12,19 @@ export default function SearchWord() {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [words, setWords] = useState([]);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const searchContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (open && searchContainerRef.current) {
+      const rect = searchContainerRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width
+      });
+    }
+  }, [open]);
 
   const debouncedSearch = useMemo(
     () => debounce((newValue) => {
@@ -24,6 +38,8 @@ export default function SearchWord() {
         })
           .then(result => setWords(result.data))
           .catch(ex => console.error(ex))
+      } else {
+        setWords([]);
       }
     }, 500),
     []
@@ -31,20 +47,22 @@ export default function SearchWord() {
 
   const onSearchQueryChange = useCallback(
     e => {
-      setSearchQuery(e.target.value);
-      debouncedSearch(e.target.value);
+      const value = e.target.value;
+      setSearchQuery(value);
+      if (value.length > 2) {
+        setOpen(true);
+        debouncedSearch(value);
+      } else {
+        setOpen(false);
+        setWords([]);
+      }
     },
     [debouncedSearch]
   )
 
-
   function handleClickOpen() {
-    setOpen(true);
-  }
-
-  function handleBlur() {
-    if (words.length === 0 || searchQuery.length === 0) {
-      handleClose()
+    if (searchQuery.length > 2) {
+      setOpen(true);
     }
   }
 
@@ -55,55 +73,97 @@ export default function SearchWord() {
   }
 
   let wordsRendered;
-  if (words.length > 0) {
-    wordsRendered = words.map(word => (
-      <WordAccordion key={word.id} word={word} showButtons={false}/>
-    ))
+  if (searchQuery.length > 2) {
+    if (words.length > 0) {
+      wordsRendered = words.map(word => (
+        <WordAccordion key={word.id} word={word} showButtons={false}/>
+      ))
+    } else {
+      wordsRendered = (
+        <Box sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="body1" color="text.secondary">
+            No words found matching "{searchQuery}"
+          </Typography>
+        </Box>
+      )
+    }
   } else {
-    wordsRendered = <Typography mt={2} align="center" variant="h5">Not found</Typography>
+    wordsRendered = (
+      <Box sx={{ p: 4, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          Type at least 3 characters to search...
+        </Typography>
+      </Box>
+    )
   }
 
   return (
-    <div>
-      <TextField fullWidth
-                 id="outlined-basic"
-                 label="Find..."
-                 variant="outlined"
-                 value={searchQuery}
-                 onChange={e => onSearchQueryChange(e)}
-                 onFocus={handleClickOpen}
-                 onBlur={handleBlur}
-                 InputProps={{
-                   endAdornment:
-                     open ? <InputAdornment position="end">
-                       <IconButton
-                         aria-label="toggle password visibility"
-                         onClick={handleClose}
-                         edge="end"
-                       >
-                         <CloseIcon/>
-                       </IconButton>
-                     </InputAdornment> : null
-                 }}
-      />
-      <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-        <Paper sx={{
-          position: 'fixed',
-          width: '100%',
-          height: '100%',
-          zIndex: 99999
+    <Box ref={searchContainerRef} sx={{ position: 'relative' }}>
+      <TextField 
+        fullWidth
+        id="search-words"
+        label="Search words..."
+        variant="outlined"
+        value={searchQuery}
+        onChange={onSearchQueryChange}
+        onFocus={handleClickOpen}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: 'primary.main',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'primary.main',
+            }
+          }
         }}
-               onClick={e => {
-                 console.log('azaza')
-                 e.preventDefault()
-               }}>
-          <Grid container>
-            <Grid item xs={12}>
-              {wordsRendered}
-            </Grid>
-          </Grid>
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon color="action" />
+            </InputAdornment>
+          ),
+          endAdornment: open ? (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="close search"
+                onClick={handleClose}
+                edge="end"
+                size="small"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'action.hover'
+                  }
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </InputAdornment>
+          ) : null
+        }}
+      />
+      
+      <Slide direction="down" in={open} mountOnEnter unmountOnExit>
+        <Paper 
+          elevation={8}
+          sx={{
+            position: 'fixed',
+            top: position.top,
+            left: position.left,
+            width: position.width,
+            zIndex: 9999,
+            maxHeight: '400px',
+            overflowY: 'auto',
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Box sx={{ p: 2 }}>
+            {wordsRendered}
+          </Box>
         </Paper>
       </Slide>
-    </div>
+    </Box>
   );
 }

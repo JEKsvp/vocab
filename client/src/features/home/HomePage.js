@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Box, Divider, Grid, List} from "@mui/material";
+import {Box, Card, CardContent, Container, Divider, List, Paper, Typography} from "@mui/material";
 
 import ReplayIcon from '@mui/icons-material/Replay';
 import Replay30Icon from '@mui/icons-material/Replay30';
@@ -13,39 +13,87 @@ import {LogoutButton} from "../../utils/components/LogoutButton";
 
 
 export const HomePage = () => {
-  const [, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   useEffect(() => {
     getCurrentUser()
       .then(result => setUser(result))
       .catch(ex => console.error(ex))
   }, [])
+  
   return (
-    <Box sx={{
-      height: '100px'
-    }}>
-      <Grid container>
-        <Grid container>
-          <Grid item xs={12} mt={2}>
-            <SearchWord/>
-          </Grid>
-        </Grid>
-        <Grid container mt={2}>
-          <Grid item xs={12}>
-            <Divider/>
-            <List>
-              <ListItemLink to={'/words-batch'} title={'Batch'} icon={<ListAltIcon fontSize={"large"}/>}/>
-              <Divider/>
-              <ListItemLink to={'/to-learn'} title={'To learn'} icon={<ReplayIcon fontSize={"large"}/>}/>
-              <Divider/>
-              <ListItemLink to={'/learned'} title={'Learned'} icon={<Replay30Icon fontSize={"large"}/>}/>
-              <Divider/>
-            </List>
-          </Grid>
-        </Grid>
-      </Grid>
-      <NewWordButton/>
-      <SwitchLanguageButton/>
-      <LogoutButton/>
-    </Box>
+    <Container maxWidth="md" sx={{ py: 3 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom align="center" color="primary">
+          Vocabulary Learning
+        </Typography>
+        {user && (
+          <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 3 }}>
+            Welcome back, {user.name || 'Learner'}!
+          </Typography>
+        )}
+      </Box>
+
+      <Card sx={{ mb: 4, elevation: 2 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary">
+            Search Words
+          </Typography>
+          <SearchWord/>
+        </CardContent>
+      </Card>
+
+      <Card sx={{ mb: 4, elevation: 2 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary" sx={{ mb: 2 }}>
+            Quick Actions
+          </Typography>
+          <List sx={{ 
+            '& .MuiListItem-root': {
+              borderRadius: 2,
+              mb: 1,
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              }
+            }
+          }}>
+            <ListItemLink 
+              to={'/words-batch'} 
+              title={'Word Batches'} 
+              icon={<ListAltIcon fontSize={"large"} color="primary"/>}
+            />
+            <Divider sx={{ my: 1 }}/>
+            <ListItemLink 
+              to={'/to-learn'} 
+              title={'Words to Learn'} 
+              icon={<ReplayIcon fontSize={"large"} color="secondary"/>}
+            />
+            <Divider sx={{ my: 1 }}/>
+            <ListItemLink 
+              to={'/learned'} 
+              title={'Learned Words'} 
+              icon={<Replay30Icon fontSize={"large"} color="success"/>}
+            />
+          </List>
+        </CardContent>
+      </Card>
+
+      <Paper 
+        sx={{ 
+          position: 'fixed', 
+          bottom: 16, 
+          right: 16, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 1,
+          p: 1,
+          borderRadius: 2,
+          elevation: 3
+        }}
+      >
+        <NewWordButton/>
+        <SwitchLanguageButton/>
+        <LogoutButton/>
+      </Paper>
+    </Container>
   )
 }

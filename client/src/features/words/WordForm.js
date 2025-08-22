@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Box, Button, Grid, IconButton, Paper, TextField} from "@mui/material";
+import {Box, Button, Card, CardContent, Divider, Grid, IconButton, TextField, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {HomeButton} from "../../utils/components/HomeButton";
@@ -8,38 +8,54 @@ import {extractPart, extractTranscription, splitByNewLine} from "./WordParser";
 
 const DefinitionTextField = ({value, onChange, onAddDefinition, onRemoveDefinition, defMeta}) => {
   const removeButton = defMeta.i === 0 ? null : (
-    <IconButton onClick={onRemoveDefinition}>
+    <IconButton 
+      onClick={onRemoveDefinition}
+      color="error"
+      size="small"
+      sx={{ mt: 1 }}
+    >
       <RemoveIcon/>
     </IconButton>
   )
   const buttons = defMeta.i === defMeta.length - 1 ? (
-    <React.Fragment>
+    <Box sx={{ display: 'flex', flexDirection: 'column', ml: 1 }}>
       {removeButton}
-      <IconButton onClick={onAddDefinition}>
+      <IconButton 
+        onClick={onAddDefinition}
+        color="primary"
+        size="small"
+        sx={{ mt: 1 }}
+      >
         <AddIcon/>
       </IconButton>
-    </React.Fragment>
+    </Box>
   ) : null
   return (
-    <Grid container>
-      <Grid item xs={1}/>
-      <Grid item xs={9}>
-        <TextField variant="outlined"
-                   margin="dense"
-                   label="Definition"
-                   multiline
-                   rows={2}
-                   fullWidth
-                   value={value}
-                   onChange={onChange}
-                   size="medium"
+    <Grid container alignItems="flex-start" spacing={1}>
+      <Grid item xs={11}>
+        <TextField 
+          variant="outlined"
+          margin="normal"
+          label="Definition"
+          multiline
+          rows={3}
+          fullWidth
+          value={value}
+          onChange={onChange}
+          sx={{ 
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'primary.main',
+              },
+            }
+          }}
         />
       </Grid>
-      <Grid item>
-        <Grid container direction="column">
+      {buttons && (
+        <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center' }}>
           {buttons}
         </Grid>
-      </Grid>
+      )}
     </Grid>
   )
 }
@@ -52,38 +68,55 @@ const ExampleTextField = ({
                             onRemoveExample
                           }) => {
   const removeButton = exMeta.i === 0 ? null : (
-    <IconButton onClick={onRemoveExample}>
+    <IconButton 
+      onClick={onRemoveExample}
+      color="error"
+      size="small"
+      sx={{ mt: 1 }}
+    >
       <RemoveIcon/>
     </IconButton>
   )
   const buttons = exMeta.i === exMeta.length - 1 ? (
-    <React.Fragment>
+    <Box sx={{ display: 'flex', flexDirection: 'column', ml: 1 }}>
       {removeButton}
-      <IconButton onClick={onAddExample}>
+      <IconButton 
+        onClick={onAddExample}
+        color="secondary"
+        size="small"
+        sx={{ mt: 1 }}
+      >
         <AddIcon/>
       </IconButton>
-    </React.Fragment>
+    </Box>
   ) : null
   return (
-    <Grid container>
-      <Grid item xs={1}/>
-      <Grid item xs={8}>
-        <TextField variant="outlined"
-                   margin="dense"
-                   label="Example"
-                   multiline
-                   rows={2}
-                   value={value}
-                   onChange={onChangeExample}
-                   fullWidth
-                   size="medium"
+    <Grid container alignItems="flex-start" spacing={1} sx={{ ml: 2, mb: 1 }}>
+      <Grid item xs={10}>
+        <TextField 
+          variant="outlined"
+          margin="normal"
+          label={`Example ${exMeta.i + 1}`}
+          multiline
+          rows={2}
+          value={value}
+          onChange={onChangeExample}
+          fullWidth
+          size="small"
+          sx={{ 
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'secondary.main',
+              },
+            }
+          }}
         />
       </Grid>
-      <Grid item>
-        <Grid container direction="column">
+      {buttons && (
+        <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center' }}>
           {buttons}
         </Grid>
-      </Grid>
+      )}
     </Grid>
   )
 }
@@ -109,15 +142,28 @@ const DefinitionGroup = ({
     />
   ))
   return (
-    <Paper>
-      <DefinitionTextField value={definition.definition}
-                           onChange={onChangeDefinitions}
-                           onAddDefinition={onAddDefinition}
-                           onRemoveDefinition={onRemoveDefinition}
-                           defMeta={defMeta}
-      />
-      {examplesRendered}
-    </Paper>
+    <Card sx={{ mb: 2, elevation: 2 }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom color="primary">
+          Definition {defMeta.i + 1}
+        </Typography>
+        <DefinitionTextField value={definition.definition}
+                             onChange={onChangeDefinitions}
+                             onAddDefinition={onAddDefinition}
+                             onRemoveDefinition={onRemoveDefinition}
+                             defMeta={defMeta}
+        />
+        {examples.length > 0 && examples[0] !== '' && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="subtitle2" gutterBottom color="text.secondary">
+              Examples
+            </Typography>
+          </>
+        )}
+        {examplesRendered}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -230,63 +276,97 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
   )
 
   return (
-    <Box>
-      <Grid container>
-        <Grid item xs={1}/>
-        <Grid item xs={10}>
-          <TextField variant="outlined"
-                     margin="dense"
-                     label="Title"
-                     id="Title"
-                     fullWidth
-                     value={word.title}
-                     onChange={(e) => handleChangeTitle(e.target.value)}
-                     size="medium"
-          />
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={1}/>
-        <Grid item xs={10}>
-          <TextField variant="outlined"
-                     margin="dense"
-                     label="Transcription"
-                     id="Transcription"
-                     fullWidth
-                     value={word.transcription}
-                     onChange={(e) => handleChangeTranscription(e.target.value)}
-                     size="medium"
-          />
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={1}/>
-        <Grid item xs={10}>
-          <TextField variant="outlined"
-                     margin="dense"
-                     label="Part"
-                     id="Part"
-                     fullWidth
-                     value={word.part}
-                     onChange={(e) => handleChangePart(e.target.value)}
-                     size="medium"
-          />
-        </Grid>
-      </Grid>
+    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+      <Card sx={{ mb: 3, elevation: 3 }}>
+        <CardContent>
+          <Typography variant="h4" gutterBottom color="primary" align="center">
+            {word.id ? 'Edit Word' : 'New Word'}
+          </Typography>
+          <Divider sx={{ mb: 3 }} />
+          
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField 
+                variant="outlined"
+                margin="normal"
+                label="Word Title"
+                id="Title"
+                fullWidth
+                value={word.title}
+                onChange={(e) => handleChangeTitle(e.target.value)}
+                required
+                sx={{ 
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField 
+                variant="outlined"
+                margin="normal"
+                label="Transcription"
+                id="Transcription"
+                fullWidth
+                value={word.transcription}
+                onChange={(e) => handleChangeTranscription(e.target.value)}
+                placeholder="e.g., /həˈloʊ/"
+                sx={{ 
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField 
+                variant="outlined"
+                margin="normal"
+                label="Part of Speech"
+                id="Part"
+                fullWidth
+                value={word.part}
+                onChange={(e) => handleChangePart(e.target.value)}
+                placeholder="e.g., noun, verb, adjective"
+                sx={{ 
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                  }
+                }}
+              />
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      <Typography variant="h5" gutterBottom color="primary" sx={{ mb: 2 }}>
+        Definitions
+      </Typography>
       {definitionsRendered}
-      <Grid container justifyContent="center">
-        <Grid item>
-          <Box mt="10px"/>
-          <Button
-            size="large"
-            onClick={() => onSave(word, definitions)}
-            variant="contained"
-            disabled={isSaving}
-          >
-            Save
-          </Button>
-        </Grid>
-      </Grid>
+      
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
+        <Button
+          size="large"
+          onClick={() => onSave(word, definitions)}
+          variant="contained"
+          disabled={isSaving}
+          sx={{ 
+            px: 4, 
+            py: 1.5,
+            fontSize: '1.1rem',
+            borderRadius: 2
+          }}
+        >
+          {isSaving ? 'Saving...' : 'Save Word'}
+        </Button>
+      </Box>
       <HomeButton/>
     </Box>
   )
