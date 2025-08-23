@@ -29,7 +29,7 @@ export const ListItemLink = (props) => {
         ) : null}
         <ListItemText 
           primary={
-            <Typography variant="h6">
+            <Typography variant="h6" color="text.primary">
               {title}
             </Typography>
           }

@@ -9,12 +9,6 @@ export const NewWordButton = () => {
     <Fab
       color="primary"
       size="large"
-      sx={{
-        position: 'fixed', 
-        bottom: 16, 
-        right: 16,
-        zIndex: 1000
-      }}
       onClick={() => navigate('/new-word')}
       title="Add New Word"
     >

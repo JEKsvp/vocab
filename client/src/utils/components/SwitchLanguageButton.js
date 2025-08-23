@@ -14,17 +14,12 @@ export const SwitchLanguageButton = () => {
   }
   return (
     <Fab
-      color="info"
+      color="secondary"
       size="medium"
-      sx={{
-        position: 'fixed', 
-        bottom: 16, 
-        left: 16
-      }}
       onClick={() => changeLanguage()}
-      title="Switch Language"
+      title={`Switch to ${LanguageStore.getLanguage() === Languages.ENGLISH ? 'Serbian' : 'English'}`}
     >
-      <Typography variant="body1">
+      <Typography variant="body2" fontWeight="bold">
         {LanguageStore.getLanguage().display}
       </Typography>
     </Fab>

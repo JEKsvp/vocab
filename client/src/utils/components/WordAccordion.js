@@ -12,8 +12,8 @@ import {
     Typography
 } from "@mui/material";
 import {ExpandMore} from "@mui/icons-material";
-import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
-import RemoveIcon from '@mui/icons-material/Remove';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {useNavigate} from "react-router-dom";
 
@@ -121,7 +121,7 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                   size="small"
                   title="Remove word"
                 >
-                  <RemoveIcon/>
+                  <DeleteIcon/>
                 </IconButton>
               )}
               <IconButton 
@@ -138,7 +138,7 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                 size="small"
                 title={isLearned ? "Mark as learning" : "Mark as learned"}
               >
-                <TrendingFlatIcon/>
+                <SwapHorizIcon/>
               </IconButton>
             </Box>
           </>

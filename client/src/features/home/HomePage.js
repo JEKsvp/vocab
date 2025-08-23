@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Box, Card, CardContent, Container, Divider, List, Paper, Typography} from "@mui/material";
 
-import ReplayIcon from '@mui/icons-material/Replay';
-import Replay30Icon from '@mui/icons-material/Replay30';
+import SchoolIcon from '@mui/icons-material/School';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import {ListItemLink} from "../../utils/components/ListItemLink";
 import {NewWordButton} from "../../utils/components/NewWordButton";
@@ -57,13 +57,13 @@ export const HomePage = () => {
             <ListItemLink 
               to={'/to-learn'} 
               title={'Words to Learn'} 
-              icon={<ReplayIcon fontSize={"large"} color="secondary"/>}
+              icon={<SchoolIcon fontSize={"large"} color="secondary"/>}
             />
             <Divider sx={{ my: 1 }}/>
             <ListItemLink 
               to={'/learned'} 
               title={'Learned Words'} 
-              icon={<Replay30Icon fontSize={"large"} color="success"/>}
+              icon={<CheckCircleIcon fontSize={"large"} color="success"/>}
             />
           </List>
         </CardContent>
@@ -76,7 +76,7 @@ export const HomePage = () => {
           bottom: 16, 
           right: 16, 
           display: 'flex', 
-          flexDirection: 'column', 
+          flexDirection: 'row', 
           gap: 1,
           p: 1,
         }}

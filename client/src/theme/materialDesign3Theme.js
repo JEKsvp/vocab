@@ -99,19 +99,19 @@ const md3ColorsDark = {
     paper: '#1C1B1F',
   },
   surface: {
-    main: '#131316',
-    variant: '#49454F',
-    container: '#211F26',
-    containerHigh: '#2B2930',
+    main: '#1A1A1E',
+    variant: '#4F4B55',
+    container: '#2A2831',
+    containerHigh: '#343139',
   },
   text: {
     primary: '#E6E1E5',
-    secondary: '#CAC4D0',
-    disabled: '#CAC4D0',
+    secondary: '#D0C4D0',
+    disabled: '#B8B1B8',
   },
   outline: {
-    main: '#938F99',
-    variant: '#49454F',
+    main: '#A5A1AB',
+    variant: '#5A555F',
   },
 };
 
@@ -189,8 +189,8 @@ const md3Typography = {
     fontWeight: 500,
   },
   labelSmall: {
-    fontSize: '0.6875rem',
-    lineHeight: 1.45,
+    fontSize: '0.75rem',
+    lineHeight: 1.43,
     letterSpacing: '0.031250em',
     fontWeight: 500,
   },
@@ -208,8 +208,8 @@ const md3Typography = {
     fontWeight: 400,
   },
   bodySmall: {
-    fontSize: '0.75rem',
-    lineHeight: 1.33,
+    fontSize: '0.8125rem',
+    lineHeight: 1.38,
     letterSpacing: '0.025000em',
     fontWeight: 400,
   },
@@ -362,10 +362,10 @@ export const materialDesign3DarkTheme = createTheme({
     ...md3ColorsDark,
     divider: md3ColorsDark.outline.variant,
     action: {
-      hover: 'rgba(208, 188, 255, 0.08)',
-      selected: 'rgba(208, 188, 255, 0.12)',
+      hover: 'rgba(208, 188, 255, 0.12)',
+      selected: 'rgba(208, 188, 255, 0.16)',
       disabled: 'rgba(230, 225, 229, 0.12)',
-      focus: 'rgba(208, 188, 255, 0.12)',
+      focus: 'rgba(208, 188, 255, 0.16)',
     },
   },
   typography: {

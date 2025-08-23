@@ -23,11 +23,6 @@ export const LogoutButton = () => {
     <Fab
       color="secondary"
       size="medium"
-      sx={{
-        position: 'fixed', 
-        bottom: 16, 
-        right: 80
-      }}
       onClick={handleLogout}
       title="Logout"
     >
