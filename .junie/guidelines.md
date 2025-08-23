@@ -204,19 +204,99 @@ test('renders component', () => {
 ## Additional Development Information
 
 ### File and Directory Management
-- **node_modules/**: Should be ignored in version control and excluded from project searches/indexing
+- **node_modules/**: Should be ignored in version control, excluded from project searches/indexing, and skipped when scanning directories or performing any other development actions
   - Contains npm dependencies that can be regenerated via `npm install`
   - Located in `client/node_modules/` directory
+  - Always exclude from directory traversal, file search operations, code analysis, and automated tooling to avoid performance issues and irrelevant results
 - **dist/**: Should be ignored in version control as it contains build artifacts
   - Frontend build output directory (`client/dist/`)
   - Automatically generated during build process
   - Contents get copied to Spring Boot's static resources
 
+### Frontend Development
+
+#### Frontend Architecture
+The frontend follows a feature-based architecture with clear separation of concerns:
+
+**Directory Structure:**
+```
+client/src/
+├── api/                    # API layer and HTTP interceptors
+│   └── interceptors/       # Axios request/response interceptors
+├── app/                    # Redux store configuration
+├── features/               # Feature-based modules
+│   ├── home/              # Home page components
+│   ├── login/             # Authentication components
+│   ├── user/              # User management components
+│   └── words/             # Word management components
+├── theme/                 # Material-UI theme configuration
+└── utils/                 # Shared utilities and reusable components
+    └── components/        # Common UI components
+```
+
+#### Frontend Technology Stack
+- **React 19.0.0**: Latest React with modern hooks and concurrent features
+- **Material-UI v6**: Complete UI component library with Material Design 3
+  - `@mui/material` for core components
+  - `@mui/icons-material` for iconography
+  - `@emotion/react` and `@emotion/styled` for styling
+- **Redux Toolkit v2**: Modern Redux with simplified state management
+- **React Router v6**: Declarative routing with modern patterns
+- **React Redux v9**: React bindings for Redux
+- **Axios v1**: HTTP client with interceptor support
+- **Lodash v4**: Utility library for data manipulation
+
+#### Component Patterns
+
+**Routing Configuration:**
+- Centralized router configuration in `App.js`
+- Feature-based route organization
+- Programmatic navigation with `useNavigate` hook
+
+**UI Patterns:**
+- Material Design 3 dark theme as default
+- Responsive design with Material-UI breakpoints
+- Floating action menus with fixed positioning
+- Accordion-based data display for complex content
+- Icon-based status indicators and actions
+
+**State Management:**
+- Redux Toolkit for global state
+- Local component state with `useState` for UI interactions
+- PropTypes validation for component interfaces
+
+#### Component Examples
+
+**ActionMenu Component:**
+```javascript
+// Floating action menu with conditional rendering
+export const ActionMenu = ({ hideNewWordButton = false }) => {
+  return (
+    <Paper elevation={2} sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+      <HomeButton />
+      {!hideNewWordButton && <NewWordButton />}
+    </Paper>
+  );
+}
+```
+
+**WordAccordion Component:**
+- Complex data display with expandable sections
+- Conditional styling based on word status
+- Integrated action buttons for CRUD operations
+- PropTypes validation for type safety
+
+#### Development Workflow
+- Hot reloading with React Scripts
+- ESLint configuration for code quality
+- Cross-platform build support with `cross-env`
+- Proxy configuration for backend API calls
+
 ### Technology Stack
 - **Backend**: Spring Boot 3.3.3, Spring Security, Spring Data MongoDB
 - **Database**: MongoDB with Querydsl 5.1.0
-- **Frontend**: React 19, Redux Toolkit, Material-UI, React Router
-- **Testing**: Testcontainers 1.20.1, JUnit 5, React Testing Library
+- **Frontend**: React 19, Material-UI v6, Redux Toolkit v2, React Router v6
+- **Testing**: Testcontainers 1.20.1, JUnit 5, React Testing Library v16
 - **Build**: Gradle with integrated npm build process
 
 ### Code Organization

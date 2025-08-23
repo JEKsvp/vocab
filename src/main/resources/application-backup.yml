@@ -1,4 +1,4 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://vocab:<PASSWORD>@vocab.xmeaz3x.mongodb.net/vocab_dev?retryWrites=true&w=majority
+      uri: mongodb+srv://vocab:6JTF4ARXzeebpvFK@vocab.xmeaz3x.mongodb.net/vocab_dev?retryWrites=true&w=majority

@@ -3,7 +3,8 @@ import './App.css';
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import {materialDesign3DarkTheme} from './theme/materialDesign3Theme';
+import {materialDesign3DarkTheme, materialDesign3LightTheme} from './theme/materialDesign3Theme';
+import {Themes, ThemeStore} from './app/ThemeStore';
 
 import {HomePage} from "./features/home/HomePage";
 import {ToLearn} from "./features/words/ToLearn";
@@ -56,8 +57,11 @@ export const router = createBrowserRouter([
 ])
 
 function App() {
+  const currentTheme = ThemeStore.getTheme();
+  const selectedTheme = currentTheme === Themes.LIGHT ? materialDesign3LightTheme : materialDesign3DarkTheme;
+
   return (
-    <ThemeProvider theme={materialDesign3DarkTheme}>
+    <ThemeProvider theme={selectedTheme}>
       <CssBaseline/>
       <RouterProvider router={router}/>
     </ThemeProvider>

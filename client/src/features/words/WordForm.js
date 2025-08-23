@@ -2,7 +2,9 @@ import React, {useState} from "react";
 import {Box, Button, Card, CardContent, Divider, Grid, IconButton, TextField, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {ActionMenu} from "../../utils/components/ActionMenu";
+import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
 import {extractPart, extractTranscription, splitByNewLine} from "./WordParser";
 
@@ -156,6 +158,7 @@ const DefinitionGroup = ({
 export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
   const [word, setWord] = useState(initWord)
   const [definitions, setDefinitions] = useState(initDefinitions)
+  const navigate = useNavigate()
 
   function handleChangeTitle(newValue) {
     const newWord = {...word}
@@ -248,6 +251,10 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
     setDefinitions(newDefinitions);
   }
 
+  function handleBack() {
+    navigate(-1);
+  }
+
   const definitionsRendered = definitions.map((definition, defI) =>
     <DefinitionGroup key={defI}
                      defMeta={{i: defI, length: definitions.length}}
@@ -316,7 +323,16 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
       </Typography>
       {definitionsRendered}
       
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 4, mb: 2 }}>
+        <Button
+          size="large"
+          onClick={handleBack}
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          disabled={isSaving}
+        >
+          Back
+        </Button>
         <Button
           size="large"
           onClick={() => onSave(word, definitions)}

@@ -8,8 +8,7 @@ import {ListItemLink} from "../../utils/components/ListItemLink";
 import {NewWordButton} from "../../utils/components/NewWordButton";
 import {getCurrentUser} from "../../api/userAPI";
 import SearchWord from "../words/SearchWord";
-import {SwitchLanguageButton} from "../../utils/components/SwitchLanguageButton";
-import {LogoutButton} from "../../utils/components/LogoutButton";
+import {LeftActionMenu} from "../../utils/components/LeftActionMenu";
 
 
 export const HomePage = () => {
@@ -82,9 +81,9 @@ export const HomePage = () => {
         }}
       >
         <NewWordButton/>
-        <SwitchLanguageButton/>
-        <LogoutButton/>
       </Paper>
+      
+      <LeftActionMenu />
     </Container>
   )
 }
