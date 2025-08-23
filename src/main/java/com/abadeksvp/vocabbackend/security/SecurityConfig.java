@@ -34,6 +34,12 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/home", "/static/**", "/v1/signup", "/v1/login").permitAll()
                 .requestMatchers("/v1/**").authenticated()
                 .anyRequest().permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> 
+                    response.sendError(401, "Unauthorized"))
+                .accessDeniedHandler((request, response, accessDeniedException) ->
+                    response.sendError(403, "Forbidden"))
             );
         return http.build();
     }

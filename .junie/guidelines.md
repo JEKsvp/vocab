@@ -12,6 +12,18 @@ This is a vocabulary learning application built with Spring Boot 3.3.3 backend a
 - Use quotes if an argument contains spaces: <cmd "arg with spaces">; <next-cmd>.
 - For platform-specific lines, provide separate lines for each OS if needed, each using the same semicolon-separated style.
 
+### Avoiding Terminal Blocking Commands
+- **DO NOT** run terminal blocking or interactive commands such as:
+  - `npm start` (starts development server and blocks terminal)
+  - `npm test` without `--watchAll=false` flag (runs in interactive watch mode)
+  - `./gradlew bootRun` (starts application server and blocks terminal)
+  - `docker-compose up` without `-d` flag (runs in foreground)
+  - Interactive shells, editors (vim, nano), or any command that requires user input
+- Always use non-blocking alternatives when available:
+  - Use `npm test -- --watchAll=false` for single-run tests
+  - Use `docker-compose up -d` for background services
+  - Prefer build commands over development servers for automated processes
+
 ### Prerequisites
 - **Java 21** (configured with toolchain)
 - **Node.js/npm** (for client build)
