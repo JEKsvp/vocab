@@ -72,25 +72,14 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
     <Accordion
       sx={{
         mb: 1,
-        borderRadius: 2,
-        '&:before': { display: 'none' },
-        boxShadow: isLearned ? '0 2px 8px rgba(76, 175, 80, 0.15)' : '0 2px 4px rgba(0,0,0,0.1)',
-        '&.Mui-expanded': {
-          boxShadow: isLearned ? '0 4px 12px rgba(76, 175, 80, 0.25)' : '0 4px 8px rgba(0,0,0,0.15)'
-        }
+        boxShadow: isLearned ? '0 2px 8px rgba(76, 175, 80, 0.15)' : undefined,
       }}
       expanded={expanded === 'panel1'}
       onChange={handleChange('panel1')}>
       <AccordionSummary
         expandIcon={<ExpandMore sx={{ color: statusColor + '.main' }} />}
         aria-controls="panel1bh-content"
-        id="panel1bh-header"
-        sx={{
-          '&:hover': {
-            backgroundColor: 'action.hover'
-          },
-          borderRadius: expanded === 'panel1' ? '8px 8px 0 0' : '8px'
-        }}>
+        id="panel1bh-header">
         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <Stack sx={{ flexGrow: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
@@ -130,13 +119,6 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                   onClick={onRemoveClick}
                   color="error"
                   size="small"
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'error.light',
-                      color: 'error.contrastText'
-                    },
-                    borderRadius: 2
-                  }}
                   title="Remove word"
                 >
                   <RemoveIcon/>
@@ -146,13 +128,6 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                 onClick={() => onEditClick(word.id)}
                 color="primary"
                 size="small"
-                sx={{
-                  '&:hover': {
-                    backgroundColor: 'primary.light',
-                    color: 'primary.contrastText'
-                  },
-                  borderRadius: 2
-                }}
                 title="Edit word"
               >
                 <EditIcon/>
@@ -161,13 +136,6 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                 onClick={onMoveWordClick}
                 color="secondary"
                 size="small"
-                sx={{
-                  '&:hover': {
-                    backgroundColor: 'secondary.light',
-                    color: 'secondary.contrastText'
-                  },
-                  borderRadius: 2
-                }}
                 title={isLearned ? "Mark as learning" : "Mark as learned"}
               >
                 <TrendingFlatIcon/>

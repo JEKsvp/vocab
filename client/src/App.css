@@ -1,3 +1,4 @@
+/* Material Design 3 Compatible App Styles */
 .App {
   text-align: center;
 }
@@ -22,8 +23,15 @@
   font-size: calc(10px + 2vmin);
 }
 
+/* Updated to use Material Design 3 primary color */
 .App-link {
-  color: rgb(112, 76, 182);
+  color: #6750A4; /* MD3 Primary color */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.App-link:hover {
+  color: #21005D; /* MD3 Primary dark */
 }
 
 @keyframes App-logo-float {

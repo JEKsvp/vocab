@@ -26,17 +26,7 @@ export const LogoutButton = () => {
       sx={{
         position: 'fixed', 
         bottom: 16, 
-        right: 80,
-        boxShadow: '0 4px 12px rgba(156, 39, 176, 0.3)',
-        '&:hover': {
-          boxShadow: '0 6px 16px rgba(156, 39, 176, 0.4)',
-          transform: 'translateY(-2px)',
-          transition: 'all 0.2s ease-in-out'
-        },
-        '&:active': {
-          transform: 'translateY(0px)'
-        },
-        transition: 'all 0.2s ease-in-out'
+        right: 80
       }}
       onClick={handleLogout}
       title="Logout"

@@ -1,16 +1,6 @@
 import React, {useState} from 'react'
-import {
-  Box,
-  Button, 
-  TextField, 
-  Alert, 
-  Paper, 
-  Typography, 
-  Container,
-  Stack,
-  Divider
-} from "@mui/material";
-import {PersonAdd as PersonAddIcon, Login as LoginIcon} from "@mui/icons-material";
+import {Alert, Box, Button, Container, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
+import {Login as LoginIcon, PersonAdd as PersonAddIcon} from "@mui/icons-material";
 import {signup} from '../../api/signupAPI'
 import {useNavigate} from "react-router-dom";
 
@@ -72,7 +62,7 @@ export const SignUpPage = () => {
         }}
       >
         <Paper
-          elevation={6}
+          elevation={2}
           sx={{
             padding: 4,
             display: 'flex',
@@ -80,7 +70,6 @@ export const SignUpPage = () => {
             alignItems: 'center',
             width: '100%',
             maxWidth: 450,
-            borderRadius: 2,
           }}
         >
           <PersonAddIcon sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
@@ -109,11 +98,6 @@ export const SignUpPage = () => {
               disabled={loading}
               helperText="6-32 characters"
               error={username.length > 0 && (username.length < 6 || username.length > 32)}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                }
-              }}
             />
             
             <TextField 
@@ -126,11 +110,6 @@ export const SignUpPage = () => {
               disabled={loading}
               helperText="6-32 characters"
               error={password.length > 0 && (password.length < 6 || password.length > 32)}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                }
-              }}
             />
             
             <TextField 
@@ -143,11 +122,6 @@ export const SignUpPage = () => {
               disabled={loading}
               error={confirmPassword.length > 0 && password !== confirmPassword}
               helperText={confirmPassword.length > 0 && password !== confirmPassword ? "Passwords do not match" : "Re-enter your password"}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                }
-              }}
             />
             
             <Button 
@@ -156,14 +130,7 @@ export const SignUpPage = () => {
               disabled={loading}
               startIcon={<PersonAddIcon />}
               size="large"
-              sx={{
-                mt: 2,
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: '1.1rem',
-                fontWeight: 600,
-                textTransform: 'none',
-              }}
+              sx={{ mt: 2 }}
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
@@ -180,13 +147,6 @@ export const SignUpPage = () => {
               disabled={loading}
               startIcon={<LoginIcon />}
               size="large"
-              sx={{
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: '1rem',
-                fontWeight: 500,
-                textTransform: 'none',
-              }}
             >
               Sign In to Existing Account
             </Button>

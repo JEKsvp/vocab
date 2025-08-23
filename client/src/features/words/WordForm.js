@@ -42,13 +42,6 @@ const DefinitionTextField = ({value, onChange, onAddDefinition, onRemoveDefiniti
           fullWidth
           value={value}
           onChange={onChange}
-          sx={{ 
-            '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': {
-                borderColor: 'primary.main',
-              },
-            }
-          }}
         />
       </Grid>
       {buttons && (
@@ -103,13 +96,6 @@ const ExampleTextField = ({
           onChange={onChangeExample}
           fullWidth
           size="small"
-          sx={{ 
-            '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': {
-                borderColor: 'secondary.main',
-              },
-            }
-          }}
         />
       </Grid>
       {buttons && (
@@ -142,7 +128,7 @@ const DefinitionGroup = ({
     />
   ))
   return (
-    <Card sx={{ mb: 2, elevation: 2 }}>
+    <Card sx={{ mb: 2 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom color="primary">
           Definition {defMeta.i + 1}
@@ -277,7 +263,7 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
-      <Card sx={{ mb: 3, elevation: 3 }}>
+      <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h4" gutterBottom color="primary" align="center">
             {word.id ? 'Edit Word' : 'New Word'}
@@ -295,13 +281,6 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
                 value={word.title}
                 onChange={(e) => handleChangeTitle(e.target.value)}
                 required
-                sx={{ 
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  }
-                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -314,13 +293,6 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
                 value={word.transcription}
                 onChange={(e) => handleChangeTranscription(e.target.value)}
                 placeholder="e.g., /həˈloʊ/"
-                sx={{ 
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  }
-                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -333,13 +305,6 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
                 value={word.part}
                 onChange={(e) => handleChangePart(e.target.value)}
                 placeholder="e.g., noun, verb, adjective"
-                sx={{ 
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  }
-                }}
               />
             </Grid>
           </Grid>
@@ -357,12 +322,6 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
           onClick={() => onSave(word, definitions)}
           variant="contained"
           disabled={isSaving}
-          sx={{ 
-            px: 4, 
-            py: 1.5,
-            fontSize: '1.1rem',
-            borderRadius: 2
-          }}
         >
           {isSaving ? 'Saving...' : 'Save Word'}
         </Button>

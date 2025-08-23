@@ -1,18 +1,8 @@
 import React, {useState} from 'react'
-import {
-  Box, 
-  Button, 
-  TextField, 
-  Alert, 
-  Paper, 
-  Typography, 
-  Container,
-  Stack,
-  Divider
-} from "@mui/material";
+import {Alert, Box, Button, Container, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
 import {Login as LoginIcon, PersonAdd as PersonAddIcon} from "@mui/icons-material";
 import {login} from '../../api/loginAPI'
-import {useNavigate, useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -50,7 +40,7 @@ export const LoginPage = () => {
         }}
       >
         <Paper
-          elevation={6}
+          elevation={2}
           sx={{
             padding: 4,
             display: 'flex',
@@ -58,7 +48,6 @@ export const LoginPage = () => {
             alignItems: 'center',
             width: '100%',
             maxWidth: 400,
-            borderRadius: 2,
           }}
         >
           <LoginIcon sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
@@ -85,11 +74,6 @@ export const LoginPage = () => {
               fullWidth
               variant="outlined"
               disabled={loading}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                }
-              }}
             />
             
             <TextField 
@@ -100,11 +84,6 @@ export const LoginPage = () => {
               fullWidth
               variant="outlined"
               disabled={loading}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                }
-              }}
             />
             
             <Button 
@@ -113,14 +92,7 @@ export const LoginPage = () => {
               disabled={loading}
               startIcon={<LoginIcon />}
               size="large"
-              sx={{
-                mt: 2,
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: '1.1rem',
-                fontWeight: 600,
-                textTransform: 'none',
-              }}
+              sx={{ mt: 2 }}
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </Button>
@@ -137,13 +109,6 @@ export const LoginPage = () => {
               disabled={loading}
               startIcon={<PersonAddIcon />}
               size="large"
-              sx={{
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: '1rem',
-                fontWeight: 500,
-                textTransform: 'none',
-              }}
             >
               Create New Account
             </Button>

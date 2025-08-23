@@ -107,16 +107,6 @@ export default function SearchWord() {
         value={searchQuery}
         onChange={onSearchQueryChange}
         onFocus={handleClickOpen}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '&:hover fieldset': {
-              borderColor: 'primary.main',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'primary.main',
-            }
-          }
-        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -145,7 +135,7 @@ export default function SearchWord() {
       
       <Slide direction="down" in={open} mountOnEnter unmountOnExit>
         <Paper 
-          elevation={8}
+          elevation={3}
           sx={{
             position: 'fixed',
             top: position.top,
@@ -154,9 +144,6 @@ export default function SearchWord() {
             zIndex: 9999,
             maxHeight: '400px',
             overflowY: 'auto',
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider'
           }}
         >
           <Box sx={{ p: 2 }}>

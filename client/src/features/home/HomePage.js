@@ -33,7 +33,7 @@ export const HomePage = () => {
         )}
       </Box>
 
-      <Card sx={{ mb: 4, elevation: 2 }}>
+      <Card elevation={1} sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom color="primary">
             Search Words
@@ -42,20 +42,12 @@ export const HomePage = () => {
         </CardContent>
       </Card>
 
-      <Card sx={{ mb: 4, elevation: 2 }}>
+      <Card elevation={1} sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom color="primary" sx={{ mb: 2 }}>
             Quick Actions
           </Typography>
-          <List sx={{ 
-            '& .MuiListItem-root': {
-              borderRadius: 2,
-              mb: 1,
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              }
-            }
-          }}>
+          <List>
             <ListItemLink 
               to={'/words-batch'} 
               title={'Word Batches'} 
@@ -78,6 +70,7 @@ export const HomePage = () => {
       </Card>
 
       <Paper 
+        elevation={2}
         sx={{ 
           position: 'fixed', 
           bottom: 16, 
@@ -86,8 +79,6 @@ export const HomePage = () => {
           flexDirection: 'column', 
           gap: 1,
           p: 1,
-          borderRadius: 2,
-          elevation: 3
         }}
       >
         <NewWordButton/>

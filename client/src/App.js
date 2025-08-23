@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import {materialDesign3DarkTheme} from './theme/materialDesign3Theme';
 
 import {HomePage} from "./features/home/HomePage";
 import {ToLearn} from "./features/words/ToLearn";
@@ -14,11 +15,6 @@ import {EditWordForm} from "./features/words/EditWordForm";
 import {NewWordForm} from "./features/words/NewWordForm";
 import {WordsBatch} from "./features/words/WordsBatch";
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
 
 export const router = createBrowserRouter([
   {
@@ -61,7 +57,7 @@ export const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={materialDesign3DarkTheme}>
       <CssBaseline/>
       <RouterProvider router={router}/>
     </ThemeProvider>
