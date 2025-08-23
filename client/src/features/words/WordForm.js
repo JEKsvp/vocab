@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Box, Button, Card, CardContent, Divider, Grid, IconButton, TextField, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import {HomeButton} from "../../utils/components/HomeButton";
+import {ActionMenu} from "../../utils/components/ActionMenu";
 import PropTypes from "prop-types";
 import {extractPart, extractTranscription, splitByNewLine} from "./WordParser";
 
@@ -326,7 +326,7 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
           {isSaving ? 'Saving...' : 'Save Word'}
         </Button>
       </Box>
-      <HomeButton/>
+      <ActionMenu hideNewWordButton={true}/>
     </Box>
   )
 }

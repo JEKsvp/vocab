@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import {Box, Grid, IconButton, Typography} from "@mui/material";
-import {HomeButton} from "../../utils/components/HomeButton";
-import {NewWordButton} from "../../utils/components/NewWordButton";
+import {ActionMenu} from "../../utils/components/ActionMenu";
 import {WordsLoader} from "../../utils/components/WordsLoader";
 import {WordAccordion} from "../../utils/components/WordAccordion";
 import {generateBatch, getBatch} from "../../api/wordsBatchAPI";
@@ -86,8 +85,7 @@ export const WordsBatch = () => {
         {wordsRendered}
       </Grid>
       <Box height={100}/>
-      <HomeButton/>
-      <NewWordButton/>
+      <ActionMenu/>
     </Box>
   )
 }

@@ -5,7 +5,6 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Chip,
     Divider,
     IconButton,
     Stack,
@@ -15,6 +14,8 @@ import {ExpandMore} from "@mui/icons-material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SchoolIcon from '@mui/icons-material/School';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {useNavigate} from "react-router-dom";
 
 
@@ -91,12 +92,23 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                   {word.transcription}
                 </Typography>
               )}
-              <Chip 
-                label={word.status === 'LEARNED' ? 'Learned' : 'Learning'} 
-                color={statusColor}
-                size="small"
-                sx={{ ml: 'auto' }}
-              />
+              <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
+                {isLearned ? (
+                  <CheckCircleIcon 
+                    color="success" 
+                    fontSize="medium"
+                    sx={{ opacity: 0.9 }}
+                    title="Learned"
+                  />
+                ) : (
+                  <SchoolIcon 
+                    color="primary" 
+                    fontSize="medium"
+                    sx={{ opacity: 0.8 }}
+                    title="Learning"
+                  />
+                )}
+              </Box>
             </Box>
             {word.part && (
               <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>

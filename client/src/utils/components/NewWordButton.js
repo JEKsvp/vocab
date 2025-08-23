@@ -8,7 +8,7 @@ export const NewWordButton = () => {
   return (
     <Fab
       color="primary"
-      size="large"
+      size="medium"
       onClick={() => navigate('/new-word')}
       title="Add New Word"
     >
