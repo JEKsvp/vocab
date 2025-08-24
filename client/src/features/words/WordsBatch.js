@@ -91,17 +91,23 @@ export const WordsBatch = () => {
   }, [isFullScreen, currentCardIndex, words]);
 
   function handleChangeStatus(word) {
+    console.log('[DEBUG_LOG] handleChangeStatus called for word:', word.title, 'ID:', word.id, 'current status:', word.status);
     const newStatus = word.status === 'TO_LEARN' ? 'LEARNED' : 'TO_LEARN';
+    console.log('[DEBUG_LOG] New status will be:', newStatus);
     
     changeStatus(word.id, newStatus)
       .then(() => {
+        console.log('[DEBUG_LOG] API call successful, updating local state');
         // Update the word in the current words array
         const updatedWords = words.map(w => 
           w.id === word.id ? { ...w, status: newStatus } : w
         );
         setWords(updatedWords);
       })
-      .catch(ex => console.error(ex));
+      .catch(ex => {
+        console.error('[DEBUG_LOG] API call failed:', ex);
+        console.error(ex);
+      });
   }
 
   function generateNewBatch() {
@@ -425,7 +431,7 @@ export const WordsBatch = () => {
             Ready to start your batch session?
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            {words.length} words waiting • Use swipe gestures or arrow keys to navigate
+            {words.length} words waiting
           </Typography>
           
           {/* Preview of first card */}
@@ -471,11 +477,6 @@ export const WordsBatch = () => {
             <CachedIcon />
           </IconButton>
         </Typography>
-        {words && words.length > 0 && (
-          <Typography variant="subtitle1" color="text.secondary">
-            {getLearnedWordsCount()} of {words.length} words learned
-          </Typography>
-        )}
       </Box>
 
       <Box sx={{ mt: 3 }}>

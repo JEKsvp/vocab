@@ -11,11 +11,16 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
 
   const handleCardTap = () => {
     setIsFlipped(prev => {
-      const next = !prev;
-      if (onTap) {
-        onTap(next);
+      // Only flip forward (from false to true), don't flip back
+      if (!prev) {
+        const next = true;
+        if (onTap) {
+          onTap(next);
+        }
+        return next;
       }
-      return next;
+      // If already flipped, don't change state
+      return prev;
     });
   };
 
@@ -23,6 +28,7 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
     e.stopPropagation(); // Prevent card flip when clicking status button
     if (onStatusChange) {
       onStatusChange(word);
+    } else {
     }
   };
 
@@ -101,10 +107,18 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
       }}
       onClick={handleCardTap}
       onTouchStart={(e) => {
+        // Don't interfere with IconButton touches - check for button, IconButton class, or nested icon
+        if (e.target.closest('button') || e.target.closest('[class*="IconButton"]') || e.target.closest('svg')) {
+          return;
+        }
         // Prevent parent touch handlers (e.g., swipe) from interfering
         e.stopPropagation();
       }}
       onTouchEnd={(e) => {
+        // Don't interfere with IconButton touches - check for button, IconButton class, or nested icon
+        if (e.target.closest('button') || e.target.closest('[class*="IconButton"]') || e.target.closest('svg')) {
+          return;
+        }
         // Treat as a tap: stop propagation and prevent the synthetic click
         e.stopPropagation();
         e.preventDefault();
@@ -119,186 +133,205 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
         }
       }}
     >
-      <Card
-        elevation={8}
+      <Box
         sx={{
           width: '100%',
           height: '100%',
           position: 'relative',
-          boxShadow: isLearned 
-            ? `0 8px 32px ${alpha(theme.palette.success.main, 0.3)}`
-            : `0 8px 32px ${alpha(theme.palette.primary.main, 0.2)}`,
-          '&:hover': {
-            transform: 'scale(1.02)',
-            transition: 'transform 0.2s ease-in-out'
-          }
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
         }}
       >
-        {/* Front Side - Recall */}
-        <CardContent
+        {/* Front Card */}
+        <Card
+          elevation={8}
           sx={{
+            width: '100%',
+            height: '100%',
             position: 'absolute',
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            display: isFlipped ? 'none' : 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            p: 4,
-            background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`
-            }}
+            backfaceVisibility: 'hidden',
+            boxShadow: isLearned 
+              ? `0 8px 32px ${alpha(theme.palette.success.main, 0.3)}`
+              : `0 8px 32px ${alpha(theme.palette.primary.main, 0.2)}`,
+            '&:hover': {
+              transform: 'scale(1.02)',
+              transition: 'transform 0.2s ease-in-out'
+            }
+          }}
         >
-          {/* Status Icon */}
-          <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-            {isLearned ? (
-              <CheckCircleIcon
-                color="success"
-                fontSize="medium"
-                sx={{ opacity: 0.8 }}
-              />
-            ) : (
-              <SchoolIcon
-                color="primary"
-                fontSize="medium"
-                sx={{ opacity: 0.8 }}
-              />
-            )}
-          </Box>
-
-          {/* Word Title */}
-          <Typography
-            variant="h2"
-            component="h1"
-            color="primary"
+          <CardContent
             sx={{
-              fontWeight: 700,
-              mb: 3,
-              fontSize: { xs: '2.5rem', md: '3.5rem' },
-              textShadow: `2px 2px 4px ${alpha(theme.palette.text.primary, 0.1)}`
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              p: 4,
+              background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`
             }}
           >
-            {word.title}
-          </Typography>
-
-          {/* Transcription */}
-          {word.transcription && (
-            <Typography
-              variant="h4"
-              color="text.secondary"
-              sx={{
-                fontStyle: 'italic',
-                mb: 2,
-                fontSize: { xs: '1.2rem', md: '1.5rem' }
-              }}
-            >
-              [{word.transcription}]
-            </Typography>
-          )}
-
-          {/* Part of Speech */}
-          {word.part && (
-            <Typography
-              variant="h5"
-              color="text.secondary"
-              sx={{
-                textTransform: 'capitalize',
-                mb: 4,
-                fontSize: { xs: '1rem', md: '1.2rem' },
-                fontWeight: 500
-              }}
-            >
-              {word.part}
-            </Typography>
-          )}
-
-          {/* Tap Hint */}
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              position: 'absolute',
-              bottom: 16,
-              opacity: 0.7,
-              fontSize: '0.9rem'
-            }}
-          >
-            Tap to see definition
-          </Typography>
-        </CardContent>
-
-        {/* Back Side - Review */}
-        <CardContent
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: isFlipped ? 'flex' : 'none',
-            flexDirection: 'column',
-            p: 3,
-            overflowY: 'auto',
-            background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)`
-            }}
-        >
-          {/* Header */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-            <Box>
-              <Typography variant="h4" color="primary" sx={{ fontWeight: 600 }}>
-                {word.title}
-              </Typography>
-              {word.transcription && (
-                <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                  [{word.transcription}]
-                </Typography>
-              )}
-              {word.part && (
-                <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
-                  {word.part}
-                </Typography>
-              )}
+            {/* Status Toggle Button */}
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+              <IconButton 
+                onClick={handleStatusToggle}
+                color={isLearned ? "success" : "primary"}
+                size="medium"
+                title={isLearned ? "Mark as learning" : "Mark as learned"}
+                sx={{ 
+                  bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.1),
+                  '&:hover': {
+                    bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.2),
+                  }
+                }}
+              >
+                {isLearned ? (
+                  <CheckCircleIcon fontSize="medium" />
+                ) : (
+                  <SchoolIcon fontSize="medium" />
+                )}
+              </IconButton>
             </Box>
 
-            {/* Status Toggle Button */}
-            <IconButton 
-              onClick={handleStatusToggle}
-              color={isLearned ? "success" : "primary"}
-              size="large"
-              title={isLearned ? "Mark as learning" : "Mark as learned"}
-              sx={{ 
-                bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.1),
-                '&:hover': {
-                  bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.2),
-                }
+            {/* Word Title */}
+            <Typography
+              variant="h2"
+              component="h1"
+              color="primary"
+              sx={{
+                fontWeight: 700,
+                mb: 3,
+                fontSize: { xs: '2.5rem', md: '3.5rem' },
+                textShadow: `2px 2px 4px ${alpha(theme.palette.text.primary, 0.1)}`
               }}
             >
-              <SwapHorizIcon fontSize="medium" />
-            </IconButton>
-          </Box>
+              {word.title}
+            </Typography>
 
-          {/* Definitions */}
-          <Box sx={{ flex: 1, overflowY: 'auto' }}>
-            {renderDefinitions()}
-          </Box>
+            {/* Transcription */}
+            {word.transcription && (
+              <Typography
+                variant="h4"
+                color="text.secondary"
+                sx={{
+                  fontStyle: 'italic',
+                  mb: 2,
+                  fontSize: { xs: '1.2rem', md: '1.5rem' }
+                }}
+              >
+                [{word.transcription}]
+              </Typography>
+            )}
 
-          {/* Back Hint */}
-          <Typography 
-            variant="body2" 
-            color="text.secondary"
-            sx={{ 
-              textAlign: 'center',
-              mt: 2,
-              opacity: 0.7,
-              fontSize: '0.9rem'
+            {/* Part of Speech */}
+            {word.part && (
+              <Typography
+                variant="h5"
+                color="text.secondary"
+                sx={{
+                  textTransform: 'capitalize',
+                  mb: 4,
+                  fontSize: { xs: '1rem', md: '1.2rem' },
+                  fontWeight: 500
+                }}
+              >
+                {word.part}
+              </Typography>
+            )}
+
+            {/* Tap Hint */}
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                position: 'absolute',
+                bottom: 16,
+                opacity: 0.7,
+                fontSize: '0.9rem'
+              }}
+            >
+              Tap to see definition
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Back Card */}
+        <Card
+          elevation={8}
+          sx={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            boxShadow: isLearned 
+              ? `0 8px 32px ${alpha(theme.palette.success.main, 0.3)}`
+              : `0 8px 32px ${alpha(theme.palette.primary.main, 0.2)}`,
+            '&:hover': {
+              transform: 'rotateY(180deg) scale(1.02)',
+              transition: 'transform 0.2s ease-in-out'
+            }
+          }}
+        >
+          <CardContent
+            sx={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              p: 3,
+              overflowY: 'auto',
+              background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)`
             }}
           >
-            Tap to flip back
-          </Typography>
-        </CardContent>
-      </Card>
+            {/* Header */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <Box>
+                <Typography variant="h4" color="primary" sx={{ fontWeight: 600 }}>
+                  {word.title}
+                </Typography>
+                {word.transcription && (
+                  <Typography variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    [{word.transcription}]
+                  </Typography>
+                )}
+                {word.part && (
+                  <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
+                    {word.part}
+                  </Typography>
+                )}
+              </Box>
+
+              {/* Status Toggle Button */}
+              <IconButton 
+                onClick={handleStatusToggle}
+                color={isLearned ? "success" : "primary"}
+                size="large"
+                title={isLearned ? "Mark as learning" : "Mark as learned"}
+                sx={{ 
+                  bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.1),
+                  '&:hover': {
+                    bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.2),
+                  }
+                }}
+              >
+                <SwapHorizIcon fontSize="medium" />
+              </IconButton>
+            </Box>
+
+            {/* Definitions */}
+            <Box sx={{ flex: 1, overflowY: 'auto' }}>
+              {renderDefinitions()}
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 };

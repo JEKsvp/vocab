@@ -34,9 +34,6 @@ export const HomePage = () => {
 
       <Card elevation={1} sx={{ mb: 4 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom color="primary">
-            Search Words
-          </Typography>
           <SearchWord/>
         </CardContent>
       </Card>
