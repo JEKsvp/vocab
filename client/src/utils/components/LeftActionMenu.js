@@ -5,7 +5,7 @@ import {UserMenuButton} from "./UserMenuButton";
 export const LeftActionMenu = () => {
   return (
     <Paper 
-      elevation={2}
+      elevation={0}
       sx={{ 
         position: 'fixed', 
         bottom: 16, 
@@ -14,6 +14,7 @@ export const LeftActionMenu = () => {
         flexDirection: 'row', 
         gap: 1,
         p: 1,
+        backgroundColor: 'transparent',
       }}
     >
       <UserMenuButton />

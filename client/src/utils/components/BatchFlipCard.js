@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {alpha, Box, Card, CardContent, IconButton, Typography, useTheme} from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import {alpha, Box, Card, CardContent, Typography, useTheme} from '@mui/material';
+import {StatusToggleButton} from './StatusToggleButton';
 
-export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
+export const BatchFlipCard = ({ word, onStatusChange, onTap, disableFlip = false }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const theme = useTheme();
 
   const handleCardTap = () => {
+    if (disableFlip) return; // Don't flip if disabled
+    
     setIsFlipped(prev => {
       // Only flip forward (from false to true), don't flip back
       if (!prev) {
@@ -102,7 +102,7 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
         maxWidth: 500,
         height: 400,
         mx: 'auto',
-        cursor: 'pointer',
+        cursor: disableFlip ? 'default' : 'pointer',
         userSelect: 'none'
       }}
       onClick={handleCardTap}
@@ -176,26 +176,11 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
             }}
           >
             {/* Status Toggle Button */}
-            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-              <IconButton 
-                onClick={handleStatusToggle}
-                color={isLearned ? "success" : "primary"}
-                size="medium"
-                title={isLearned ? "Mark as learning" : "Mark as learned"}
-                sx={{ 
-                  bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.1),
-                  '&:hover': {
-                    bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.2),
-                  }
-                }}
-              >
-                {isLearned ? (
-                  <CheckCircleIcon fontSize="medium" />
-                ) : (
-                  <SchoolIcon fontSize="medium" />
-                )}
-              </IconButton>
-            </Box>
+            <StatusToggleButton 
+              isLearned={isLearned}
+              onToggle={handleStatusToggle}
+              size="medium"
+            />
 
             {/* Word Title */}
             <Typography
@@ -309,20 +294,12 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
               </Box>
 
               {/* Status Toggle Button */}
-              <IconButton 
-                onClick={handleStatusToggle}
-                color={isLearned ? "success" : "primary"}
+              <StatusToggleButton 
+                isLearned={isLearned}
+                onToggle={handleStatusToggle}
                 size="large"
-                title={isLearned ? "Mark as learning" : "Mark as learned"}
-                sx={{ 
-                  bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.1),
-                  '&:hover': {
-                    bgcolor: alpha(isLearned ? theme.palette.success.main : theme.palette.primary.main, 0.2),
-                  }
-                }}
-              >
-                <SwapHorizIcon fontSize="medium" />
-              </IconButton>
+                sx={{ position: 'static' }}
+              />
             </Box>
 
             {/* Definitions */}
@@ -339,5 +316,6 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
 BatchFlipCard.propTypes = {
   word: PropTypes.object.isRequired,
   onStatusChange: PropTypes.func,
-  onTap: PropTypes.func
+  onTap: PropTypes.func,
+  disableFlip: PropTypes.bool
 };

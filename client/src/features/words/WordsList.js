@@ -3,7 +3,8 @@ import {Box, Grid, Pagination, Typography} from "@mui/material";
 import {WordAccordion} from "../../utils/components/WordAccordion";
 import {changeStatus, getAllWords, removeWord} from "../../api/wordsAPI";
 import {WordsLoader} from "../../utils/components/WordsLoader";
-import {ActionMenu} from "../../utils/components/ActionMenu";
+import {NewWordButton} from "../../utils/components/NewWordButton";
+import {LeftHomeButton} from "../../utils/components/LeftHomeButton";
 import PropTypes from "prop-types";
 import {WordForm} from "./WordForm";
 import {LanguageStore} from "../../app/LanguageStore";
@@ -94,6 +95,7 @@ export const WordsList = ({status}) => {
 
   return (
     <Box>
+      <LeftHomeButton />
       <Grid container justifyContent="center">
         <Grid item>
           <Typography variant="h4">{status === 'TO_LEARN' ? 'To learn' : 'Learned'}</Typography>
@@ -104,7 +106,9 @@ export const WordsList = ({status}) => {
       </Grid>
       {pagingRendered}
       <Box height={100}/>
-      <ActionMenu/>
+      <Box sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+        <NewWordButton/>
+      </Box>
     </Box>
   )
 }

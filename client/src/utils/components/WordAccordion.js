@@ -11,12 +11,10 @@ import {
     Typography
 } from "@mui/material";
 import {ExpandMore} from "@mui/icons-material";
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import SchoolIcon from '@mui/icons-material/School';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {useNavigate} from "react-router-dom";
+import {StatusToggleButton} from './StatusToggleButton';
 
 
 export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons = true}) => {
@@ -92,23 +90,6 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
                   {word.transcription}
                 </Typography>
               )}
-              <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-                {isLearned ? (
-                  <CheckCircleIcon 
-                    color="success" 
-                    fontSize="medium"
-                    sx={{ opacity: 0.9 }}
-                    title="Learned"
-                  />
-                ) : (
-                  <SchoolIcon 
-                    color="primary" 
-                    fontSize="medium"
-                    sx={{ opacity: 0.8 }}
-                    title="Learning"
-                  />
-                )}
-              </Box>
             </Box>
             {word.part && (
               <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
@@ -144,14 +125,12 @@ export const WordAccordion = ({word, onMoveWordClick, onRemoveClick, showButtons
               >
                 <EditIcon/>
               </IconButton>
-              <IconButton 
-                onClick={onMoveWordClick}
-                color="secondary"
+              <StatusToggleButton 
+                isLearned={isLearned}
+                onToggle={onMoveWordClick}
                 size="small"
-                title={isLearned ? "Mark as learning" : "Mark as learned"}
-              >
-                <SwapHorizIcon/>
-              </IconButton>
+                sx={{ position: 'static', '& > div': { position: 'static' } }}
+              />
             </Box>
           </>
         )}

@@ -3,7 +3,6 @@ import {Box, Button, Card, CardContent, Divider, Grid, IconButton, TextField, Ty
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {ActionMenu} from "../../utils/components/ActionMenu";
 import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
 import {extractPart, extractTranscription, splitByNewLine} from "./WordParser";
@@ -342,7 +341,6 @@ export const WordForm = ({initWord, initDefinitions, onSave, isSaving}) => {
           {isSaving ? 'Saving...' : 'Save Word'}
         </Button>
       </Box>
-      <ActionMenu hideNewWordButton={true}/>
     </Box>
   )
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Box, Card, CardContent, Container, Divider, List, Paper, Typography} from "@mui/material";
+import {Box, Card, CardContent, Container, Divider, List, Typography} from "@mui/material";
 
 import SchoolIcon from '@mui/icons-material/School';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -65,20 +65,9 @@ export const HomePage = () => {
         </CardContent>
       </Card>
 
-      <Paper 
-        elevation={2}
-        sx={{ 
-          position: 'fixed', 
-          bottom: 16, 
-          right: 16, 
-          display: 'flex', 
-          flexDirection: 'row', 
-          gap: 1,
-          p: 1,
-        }}
-      >
-        <NewWordButton/>
-      </Paper>
+        <Box sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+            <NewWordButton/>
+        </Box>
       
       <LeftActionMenu />
     </Container>

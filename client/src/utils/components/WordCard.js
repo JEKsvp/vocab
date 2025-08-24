@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import {Box, Button, Card, CardContent, Collapse, Divider, IconButton, Stack, Typography} from "@mui/material";
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SchoolIcon from '@mui/icons-material/School';
@@ -9,6 +8,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {useNavigate} from "react-router-dom";
+import {StatusToggleButton} from './StatusToggleButton';
 
 export const WordCard = ({word, onMoveWordClick, onRemoveClick, showButtons = true}) => {
   const [showDefinitions, setShowDefinitions] = useState(false);
@@ -150,15 +150,12 @@ export const WordCard = ({word, onMoveWordClick, onRemoveClick, showButtons = tr
               >
                 <EditIcon fontSize="medium" />
               </IconButton>
-              <IconButton 
-                onClick={onMoveWordClick}
-                color="secondary"
+              <StatusToggleButton 
+                isLearned={isLearned}
+                onToggle={onMoveWordClick}
                 size="large"
-                title={isLearned ? "Mark as learning" : "Mark as learned"}
-                sx={{ p: 1 }}
-              >
-                <SwapHorizIcon fontSize="medium" />
-              </IconButton>
+                sx={{ position: 'static', '& > div': { position: 'static' }, p: 1 }}
+              />
             </Box>
           </>
         )}

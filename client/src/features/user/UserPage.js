@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {Grid, Typography} from "@mui/material";
+import {Box, Grid, Typography} from "@mui/material";
 import {getCurrentUser} from "../../api/userAPI";
-import {ActionMenu} from "../../utils/components/ActionMenu";
+import {NewWordButton} from "../../utils/components/NewWordButton";
 
 const UserDisplay = ({user}) => {
   return (
@@ -24,7 +24,9 @@ export const UserPage = () => {
   return (
     <Grid container>
       {user ? <UserDisplay user={user}/> : ''}
-      <ActionMenu/>
+      <Box sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+        <NewWordButton/>
+      </Box>
     </Grid>
   )
 }

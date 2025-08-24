@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {alpha, Box, Button, Fade, IconButton, LinearProgress, Typography, useTheme} from "@mui/material";
-import {ActionMenu} from "../../utils/components/ActionMenu";
+import {LeftHomeButton} from "../../utils/components/LeftHomeButton";
 import {WordsLoader} from "../../utils/components/WordsLoader";
 import {BatchFlipCard} from "../../utils/components/BatchFlipCard";
 import {BatchCompletionCard} from "../../utils/components/BatchCompletionCard";
@@ -439,6 +439,7 @@ export const WordsBatch = () => {
             <BatchFlipCard
               word={currentWord}
               onStatusChange={handleChangeStatus}
+              disableFlip={true}
             />
           </Box>
 
@@ -448,15 +449,23 @@ export const WordsBatch = () => {
             startIcon={<FullscreenIcon />}
             size="large"
             sx={{
-              py: 1.5,
-              px: 4,
-              fontSize: '1.2rem',
-              fontWeight: 600,
+              py: 2,
+              px: 6,
+              fontSize: '1.4rem',
+              fontWeight: 700,
+              minWidth: 200,
               background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-              boxShadow: `0 4px 16px ${alpha(theme.palette.primary.main, 0.3)}`,
+              boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.4)}`,
+              border: `2px solid ${alpha(theme.palette.primary.light, 0.3)}`,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
+                transform: 'translateY(-4px) scale(1.05)',
+                boxShadow: `0 12px 32px ${alpha(theme.palette.primary.main, 0.6)}`,
+                background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                border: `2px solid ${alpha(theme.palette.primary.light, 0.5)}`,
+              },
+              '&:active': {
+                transform: 'translateY(-2px) scale(1.02)',
               }
             }}
           >
@@ -469,6 +478,9 @@ export const WordsBatch = () => {
 
   return (
     <Box>
+      {/* Show HomePage button only when session is not started */}
+      {!isFullScreen && <LeftHomeButton />}
+      
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
         <Typography variant="h4" sx={{ mb: 2 }}>
@@ -484,7 +496,6 @@ export const WordsBatch = () => {
       </Box>
       
       <Box height={100} />
-      <ActionMenu />
     </Box>
   )
 }
