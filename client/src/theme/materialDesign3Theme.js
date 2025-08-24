@@ -1,117 +1,117 @@
 import {createTheme} from '@mui/material/styles';
 
-// Material Design 3 Color Tokens
+// Blue Slate & Paper Light Theme Color Tokens - "Paper" 📜
 const md3Colors = {
-  // Primary colors
+  // Primary colors - Slate Blue
   primary: {
-    main: '#6750A4',
-    light: '#EADDFF',
-    dark: '#21005D',
+    main: '#4A6C8C',
+    light: '#8AB4F8',
+    dark: '#1A2D42',
     contrastText: '#FFFFFF',
   },
-  // Secondary colors
+  // Secondary colors - keeping harmonious with slate blue
   secondary: {
-    main: '#625B71',
-    light: '#E8DEF8',
-    dark: '#1D192B',
+    main: '#5E6B7A',
+    light: '#B0B3B8',
+    dark: '#2A2A2A',
     contrastText: '#FFFFFF',
   },
-  // Tertiary colors
+  // Tertiary colors - soft complement
   tertiary: {
-    main: '#7D5260',
-    light: '#FFD8E4',
-    dark: '#31111D',
+    main: '#7D7A8C',
+    light: '#E1E2E6',
+    dark: '#2A2A2A',
     contrastText: '#FFFFFF',
   },
-  // Error colors
+  // Error colors - keeping standard red for accessibility
   error: {
     main: '#B3261E',
     light: '#F9DEDC',
     dark: '#410E0B',
     contrastText: '#FFFFFF',
   },
-  // Success colors (custom for the app)
+  // Success colors - keeping accessible green
   success: {
     main: '#146C2E',
     light: '#D7F2E0',
     dark: '#0D2818',
     contrastText: '#FFFFFF',
   },
-  // Surface colors
+  // Background colors - Warm off-white paper
   background: {
-    default: '#FFFBFE',
-    paper: '#FFFBFE',
+    default: '#FAF9F6',
+    paper: '#FFFFFF',
   },
   // Surface variants
   surface: {
-    main: '#FEF7FF',
-    variant: '#E7E0EC',
-    container: '#F3EDF7',
-    containerHigh: '#ECE6F0',
+    main: '#FFFFFF',
+    variant: '#F0F0F0',
+    container: '#FFFFFF',
+    containerHigh: '#F8F8F8',
   },
-  // Text colors
+  // Text colors - Dark slate grey
   text: {
-    primary: '#1C1B1F',
-    secondary: '#49454F',
-    disabled: '#49454F',
+    primary: '#2A2A2A',
+    secondary: '#5E5E5E',
+    disabled: '#8A8A8A',
   },
-  // Outline colors
+  // Outline colors - Neutral grey
   outline: {
-    main: '#79747E',
-    variant: '#CAC4D0',
+    main: '#8A8A8A',
+    variant: '#D0D0D0',
   },
 };
 
-// Dark theme color tokens
+// Blue Slate & Paper Dark Theme Color Tokens - "Slate" 🖋️
 const md3ColorsDark = {
   primary: {
-    main: '#D0BCFF',
-    light: '#4F378B',
-    dark: '#EADDFF',
-    contrastText: '#21005D',
+    main: '#8AB4F8',
+    light: '#B8D4FF',
+    dark: '#5A8FD8',
+    contrastText: '#1A2D42',
   },
   secondary: {
-    main: '#CCC2DC',
-    light: '#4A4458',
-    dark: '#E8DEF8',
-    contrastText: '#1D192B',
+    main: '#9BA3B0',
+    light: '#C8CDD6',
+    dark: '#7A8290',
+    contrastText: '#1A1D21',
   },
   tertiary: {
-    main: '#EFB8C8',
-    light: '#633B48',
-    dark: '#FFD8E4',
-    contrastText: '#31111D',
+    main: '#B0B3B8',
+    light: '#D0D3D8',
+    dark: '#909398',
+    contrastText: '#1A1D21',
   },
   error: {
     main: '#F2B8B5',
-    light: '#601410',
-    dark: '#F9DEDC',
+    light: '#FFE0DD',
+    dark: '#D89995',
     contrastText: '#410E0B',
   },
   success: {
     main: '#6DD58C',
-    light: '#0F5132',
-    dark: '#D7F2E0',
+    light: '#9AEAAC',
+    dark: '#4DB56C',
     contrastText: '#0D2818',
   },
   background: {
-    default: '#1C1B1F',
-    paper: '#1C1B1F',
+    default: '#1A1D21',
+    paper: '#26292E',
   },
   surface: {
-    main: '#1A1A1E',
-    variant: '#4F4B55',
-    container: '#2A2831',
-    containerHigh: '#343139',
+    main: '#26292E',
+    variant: '#3A3D42',
+    container: '#26292E',
+    containerHigh: '#32353A',
   },
   text: {
-    primary: '#E6E1E5',
-    secondary: '#D0C4D0',
-    disabled: '#B8B1B8',
+    primary: '#E1E2E6',
+    secondary: '#B0B3B8',
+    disabled: '#8A8D92',
   },
   outline: {
-    main: '#A5A1AB',
-    variant: '#5A555F',
+    main: '#60646B',
+    variant: '#4A4E55',
   },
 };
 
