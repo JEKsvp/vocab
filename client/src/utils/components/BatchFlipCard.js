@@ -10,10 +10,13 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
   const theme = useTheme();
 
   const handleCardTap = () => {
-    setIsFlipped(!isFlipped);
-    if (onTap) {
-      onTap(!isFlipped);
-    }
+    setIsFlipped(prev => {
+      const next = !prev;
+      if (onTap) {
+        onTap(next);
+      }
+      return next;
+    });
   };
 
   const handleStatusToggle = (e) => {
@@ -27,23 +30,44 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
 
   // Render definitions and examples
   const renderDefinitions = () => {
-    return word.definitions.map((definition, idx) => {
-      const examples = definition.examples.map((example, exIdx) => (
-        <Box key={exIdx} sx={{ ml: 2, mb: 1 }}>
-          <Typography 
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              display: 'list-item',
-              listStyleType: 'disc',
-              ml: 1,
-              fontStyle: 'italic'
-            }}
-          >
-            {example}
+    // Check if definitions exist and is an array
+    if (!word.definitions || !Array.isArray(word.definitions) || word.definitions.length === 0) {
+      return (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+            No definitions available
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This word doesn't have definitions yet.
           </Typography>
         </Box>
-      ));
+      );
+    }
+
+    return word.definitions.map((definition, idx) => {
+      // Check if definition exists and has required fields
+      if (!definition || !definition.definition) {
+        return null;
+      }
+
+      const examples = definition.examples && Array.isArray(definition.examples)
+        ? definition.examples.map((example, exIdx) => (
+            <Box key={exIdx} sx={{ ml: 2, mb: 1 }}>
+              <Typography 
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  display: 'list-item',
+                  listStyleType: 'disc',
+                  ml: 1,
+                  fontStyle: 'italic'
+                }}
+              >
+                {example}
+              </Typography>
+            </Box>
+          ))
+        : [];
 
       return (
         <Box key={`def-${idx}`} sx={{ mb: 2 }}>
@@ -61,7 +85,7 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
           )}
         </Box>
       );
-    });
+    }).filter(Boolean); // Remove any null entries
   };
 
   return (
@@ -76,6 +100,24 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
         userSelect: 'none'
       }}
       onClick={handleCardTap}
+      onTouchStart={(e) => {
+        // Prevent parent touch handlers (e.g., swipe) from interfering
+        e.stopPropagation();
+      }}
+      onTouchEnd={(e) => {
+        // Treat as a tap: stop propagation and prevent the synthetic click
+        e.stopPropagation();
+        e.preventDefault();
+        handleCardTap();
+      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardTap();
+        }
+      }}
     >
       <Card
         elevation={8}
@@ -83,17 +125,12 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
           width: '100%',
           height: '100%',
           position: 'relative',
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.6s ease-in-out',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           boxShadow: isLearned 
             ? `0 8px 32px ${alpha(theme.palette.success.main, 0.3)}`
             : `0 8px 32px ${alpha(theme.palette.primary.main, 0.2)}`,
           '&:hover': {
-            transform: isFlipped 
-              ? 'rotateY(180deg) scale(1.02)' 
-              : 'rotateY(0deg) scale(1.02)',
-            transition: 'transform 0.3s ease-in-out'
+            transform: 'scale(1.02)',
+            transition: 'transform 0.2s ease-in-out'
           }
         }}
       >
@@ -101,29 +138,30 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
         <CardContent
           sx={{
             position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
-            backfaceVisibility: 'hidden',
-            display: 'flex',
+            display: isFlipped ? 'none' : 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
             p: 4,
             background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`
-          }}
+            }}
         >
           {/* Status Icon */}
           <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
             {isLearned ? (
-              <CheckCircleIcon 
-                color="success" 
+              <CheckCircleIcon
+                color="success"
                 fontSize="medium"
                 sx={{ opacity: 0.8 }}
               />
             ) : (
-              <SchoolIcon 
-                color="primary" 
+              <SchoolIcon
+                color="primary"
                 fontSize="medium"
                 sx={{ opacity: 0.8 }}
               />
@@ -131,11 +169,11 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
           </Box>
 
           {/* Word Title */}
-          <Typography 
-            variant="h2" 
+          <Typography
+            variant="h2"
             component="h1"
             color="primary"
-            sx={{ 
+            sx={{
               fontWeight: 700,
               mb: 3,
               fontSize: { xs: '2.5rem', md: '3.5rem' },
@@ -147,10 +185,10 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
 
           {/* Transcription */}
           {word.transcription && (
-            <Typography 
-              variant="h4" 
+            <Typography
+              variant="h4"
               color="text.secondary"
-              sx={{ 
+              sx={{
                 fontStyle: 'italic',
                 mb: 2,
                 fontSize: { xs: '1.2rem', md: '1.5rem' }
@@ -162,10 +200,10 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
 
           {/* Part of Speech */}
           {word.part && (
-            <Typography 
-              variant="h5" 
+            <Typography
+              variant="h5"
               color="text.secondary"
-              sx={{ 
+              sx={{
                 textTransform: 'capitalize',
                 mb: 4,
                 fontSize: { xs: '1rem', md: '1.2rem' },
@@ -177,10 +215,10 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
           )}
 
           {/* Tap Hint */}
-          <Typography 
-            variant="body2" 
+          <Typography
+            variant="body2"
             color="text.secondary"
-            sx={{ 
+            sx={{
               position: 'absolute',
               bottom: 16,
               opacity: 0.7,
@@ -195,16 +233,16 @@ export const BatchFlipCard = ({ word, onStatusChange, onTap }) => {
         <CardContent
           sx={{
             position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
-            backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            display: 'flex',
+            display: isFlipped ? 'flex' : 'none',
             flexDirection: 'column',
             p: 3,
             overflowY: 'auto',
             background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)`
-          }}
+            }}
         >
           {/* Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
