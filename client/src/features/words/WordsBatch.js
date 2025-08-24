@@ -422,10 +422,10 @@ export const WordsBatch = () => {
         {/* Preview Card */}
         <Box sx={{ mb: 4, textAlign: 'center' }}>
           <Typography variant="h5" color="text.primary" sx={{ mb: 2 }}>
-            Ready to start your batch session?
+            Ready to start?
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            {words.length} words waiting • Use swipe gestures or arrow keys to navigate
+            {words.length} words • Tap cards to see definitions
           </Typography>
           
           {/* Preview of first card */}
